@@ -122,8 +122,8 @@ export default function FinancePage() {
     };
 
     const filteredPurchases = purchases.filter(p => {
-        const matchesSearch = p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.provider.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = (p.description || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (p.provider || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchesProject = selectedProject === "all" || p.projectId === selectedProject;
         return matchesSearch && matchesProject;
     });

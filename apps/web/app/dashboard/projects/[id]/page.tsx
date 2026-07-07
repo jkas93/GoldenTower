@@ -214,7 +214,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
         if (!selectedTaskForProgress) return;
 
         // Validation: Evidence required for progress > 0
-        if (newProgressLog.progressPercentage > 0 && !imageFile) {
+        if ((newProgressLog.progressPercentage ?? 0) > 0 && !imageFile) {
             showToast("Para reportar avance, es obligatorio adjuntar una foto como evidencia.", "warning");
             return;
         }
@@ -1187,7 +1187,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                             {/* Multimedia Evidence Upload */}
                             <div className="space-y-3">
                                 <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">
-                                    Evidencia Fotográfica {newProgressLog.progressPercentage > 0 && <span className="text-red-500">*</span>}
+                                    Evidencia Fotográfica {(newProgressLog.progressPercentage ?? 0) > 0 && <span className="text-red-500">*</span>}
                                 </label>
                                 <div className="flex gap-4">
                                     <div className="relative group">

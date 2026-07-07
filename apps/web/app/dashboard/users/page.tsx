@@ -87,7 +87,7 @@ export default function UsersPage() {
                                 <td className="p-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center font-black text-white shadow-lg shadow-yellow-500/20 border border-white">
-                                            {u.email[0].toUpperCase()}
+                                            {String(u.email || " ").charAt(0).toUpperCase()}
                                         </div>
                                         <div>
                                             <p className="font-bold text-lg tracking-tight text-gray-900">{u.name || "Usuario GP"}</p>

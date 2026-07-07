@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { UserRole, Purchase } from "@erp/shared";
+import { UserRole, Purchase, Project } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
 import {

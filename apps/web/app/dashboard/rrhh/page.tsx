@@ -12,7 +12,7 @@ export default function RRHHPage() {
     const { user, role } = useAuth();
     const router = useRouter();
     const { showToast } = useToast();
-    const [employees, setEmployees] = useState<(CreateEmployeeDto & { id: string })[]>([]);
+    const [employees, setEmployees] = useState<(CreateEmployeeDto & { id: string; status?: string; hasLaborProfile?: boolean })[]>([]);
     const [attendance, setAttendance] = useState<Attendance[]>([]);
     const [incidents, setIncidents] = useState<Incident[]>([]);
     const [activeTab, setActiveTab] = useState<'employees' | 'attendance' | 'incidents'>('employees');
@@ -336,9 +336,9 @@ export default function RRHHPage() {
                             {employees.map((emp, i) => (
                                 <div key={i} className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                                     <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-xl font-black text-gray-400">{emp.name[0]}</div>
+                                        <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-xl font-black text-gray-400">{emp.name ? emp.name[0] : '?'}</div>
                                         <div>
-                                            <h4 className="font-bold text-gray-900 uppercase tracking-tighter">{emp.name}</h4>
+                                            <div className="font-bold text-gray-900 truncate">{emp.name || 'Sin Nombre'}</div>
                                             <p className="text-[10px] text-gray-400 font-bold uppercase">{emp.role}</p>
                                         </div>
                                     </div>

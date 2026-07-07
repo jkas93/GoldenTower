@@ -13,11 +13,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@erp/shared": [
-        "../../packages/shared/index"
-      ]
-    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

@@ -3,17 +3,21 @@
   "version": "0.0.1",
   "type": "commonjs",
   "description": "",
+  "main": "dist/src/main.js",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "dev": "nest start --watch",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start": "nest start --entryFile main.local",
+    "dev": "nest start --watch --entryFile main.local",
+    "start:dev": "nest start --watch --entryFile main.local",
+    "start:debug": "nest start --debug --watch --entryFile main.local",
+    "start:prod": "node dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "clean": "rimraf dist",
     "seed:employees": "npx tsx src/scripts/seed-employees.ts",
@@ -24,7 +28,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@erp/shared": "*",
+    "@erp/shared": "file:./erp-shared-0.0.0.tgz",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",

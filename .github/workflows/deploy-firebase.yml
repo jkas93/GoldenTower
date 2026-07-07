@@ -1,0 +1,72 @@
+name: Deploy Firebase Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/api/**'
+      - 'packages/shared/**'
+      - 'firebase.json'
+      - '.firebaserc'
+
+jobs:
+  deploy:
+    name: Build & Deploy to Firebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Instalar dependencias del monorepo
+        run: npm ci
+
+      - name: Compilar @erp/shared
+        run: |
+          cd packages/shared
+          npm run build
+          npm pack
+          cp *.tgz ../../apps/api/erp-shared-0.0.0.tgz
+
+      - name: Instalar dependencias del API (con el shared local)
+        run: |
+          cd apps/api
+          npm install
+
+      - name: Escribir .env del API (desde GitHub Secrets)
+        run: |
+          cat > apps/api/.env << 'EOF'
+          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          ADMIN_PROJECT_ID=${{ secrets.ADMIN_PROJECT_ID }}
+          ADMIN_CLIENT_EMAIL=${{ secrets.ADMIN_CLIENT_EMAIL }}
+          ADMIN_PRIVATE_KEY=${{ secrets.ADMIN_PRIVATE_KEY }}
+          SMTP_HOST=${{ secrets.SMTP_HOST }}
+          SMTP_PORT=${{ secrets.SMTP_PORT }}
+          SMTP_SECURE=${{ secrets.SMTP_SECURE }}
+          SMTP_USER=${{ secrets.SMTP_USER }}
+          SMTP_PASS=${{ secrets.SMTP_PASS }}
+          EOF
+
+      - name: Deploy a Firebase Cloud Functions
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: gestion-de-proyectos-39ecc
+          channelId: live
+          entryPoint: '.'
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+        # Usamos firebase deploy directamente para funciones
+      
+      - name: Deploy solo Functions (fallback)
+        run: |
+          npx firebase-tools deploy --only functions --project gestion-de-proyectos-39ecc --token "${{ secrets.FIREBASE_TOKEN }}"
+        if: always()

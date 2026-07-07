@@ -5,12 +5,16 @@ node_modules
 .pnp
 .pnp.js
 
-# Local env files
+# Local env files — NUNCA subir al repo
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+apps/api/.env
+# Los .env.example SÍ van al repo (no tienen secretos reales)
+!.env.example
+!**/.env.example
 
 # Testing
 coverage
@@ -27,7 +31,6 @@ out/
 build
 dist
 
-
 # Debug
 npm-debug.log*
 yarn-debug.log*
@@ -36,8 +39,19 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Logs y archivos temporales de debug (raíz)
 *.txt
 *.log
+api_log.txt
+log.txt
+listening.txt
+ports_check.txt
+show.txt
+latest_employee_check.json
+cors.json
+
+# Scripts de desarrollo local (no son parte del proyecto)
 apps/api/check-db.js
 apps/api/list-users.js
 apps/api/test-firebase.js
@@ -51,4 +65,9 @@ apps/api/key_output*
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Credenciales de Firebase — CRÍTICO: nunca subir
 **/firebase-service-account.json
+
+# Tarballs de npm pack (artefactos de build locales)
+**/*.tgz

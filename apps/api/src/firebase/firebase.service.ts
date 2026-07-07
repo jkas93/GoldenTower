@@ -16,17 +16,17 @@ export class FirebaseService implements OnModuleInit {
 
         try {
             // Validar credenciales antes de inicializar
-            const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
-            const privateKey = this.configService.get<string>('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n');
-            const clientEmail = this.configService.get<string>('FIREBASE_CLIENT_EMAIL');
+            const projectId = this.configService.get<string>('ADMIN_PROJECT_ID');
+            const privateKey = this.configService.get<string>('ADMIN_PRIVATE_KEY')?.replace(/\\n/g, '\n');
+            const clientEmail = this.configService.get<string>('ADMIN_CLIENT_EMAIL');
 
             if (!projectId || !privateKey || !clientEmail) {
-                throw new Error('Faltan credenciales de Firebase. Verifica las variables de entorno: FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL');
+                throw new Error('Faltan credenciales de Firebase. Verifica las variables de entorno: ADMIN_PROJECT_ID, ADMIN_PRIVATE_KEY, ADMIN_CLIENT_EMAIL');
             }
 
             // Validar formato de private key
             if (!privateKey.includes('BEGIN PRIVATE KEY')) {
-                throw new Error('FIREBASE_PRIVATE_KEY tiene formato inválido. Debe incluir "-----BEGIN PRIVATE KEY-----"');
+                throw new Error('ADMIN_PRIVATE_KEY tiene formato inválido. Debe incluir "-----BEGIN PRIVATE KEY-----"');
             }
 
             // Timeout para la inicialización

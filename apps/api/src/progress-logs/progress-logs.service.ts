@@ -21,7 +21,7 @@ export class ProgressLogsService {
         batch.set(logRef, newLog);
 
         // 2. Update the task's current progress
-        const taskRef = firestore.collection('projects').doc(projectId).collection('tasks').doc(logData.taskId);
+        const taskRef = firestore.collection('projects').doc(projectId).collection('tasks').doc(logData.taskId!);
         batch.update(taskRef, { progress: logData.progressPercentage });
 
         await batch.commit();

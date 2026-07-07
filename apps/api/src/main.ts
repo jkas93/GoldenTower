@@ -62,19 +62,10 @@ export const api = onRequest(
     region: 'us-central1',
     memory: '512MiB',
     maxInstances: 10,
+    invoker: 'public',
   },
   async (req, res) => {
     await bootstrap();
     server(req, res);
   }
 );
-
-// Fallback para desarrollo local si se usa `npm run dev` sin emulador de Firebase
-if (process.env.NODE_ENV !== 'production' && !process.env.FUNCTIONS_EMULATOR) {
-  bootstrap().then(() => {
-    const port = process.env.PORT || 3001; // Usar 3001 para no chocar con Next.js en 3000
-    server.listen(port, () => {
-      console.log(`🚀 API en modo local escuchando en el puerto ${port}`);
-    });
-  });
-}

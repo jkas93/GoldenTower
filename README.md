@@ -1,135 +1,122 @@
-# Turborepo starter
+# 🏗️ Golden Tower ERP
 
-This Turborepo starter is maintained by the Turborepo core team.
+Sistema de gestión empresarial (ERP) para Golden Tower. Monorepo unificado con frontend en Next.js, backend en NestJS (desplegado como Firebase Cloud Functions) y base de datos en Firestore.
 
-## Using this example
+---
 
-Run the following command:
-
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 🏛️ Arquitectura
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+GoldenTower/
+├── apps/
+│   ├── web/          # Frontend — Next.js 16 + Tailwind CSS
+│   └── api/          # Backend  — NestJS → Firebase Cloud Functions
+├── packages/
+│   └── shared/       # Tipos y esquemas Zod compartidos
+├── firebase.json     # Configuración del deploy a Firebase
+└── turbo.json        # Configuración del monorepo (TurboRepo)
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Infraestructura de Producción
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+| Componente | Plataforma | URL |
+|---|---|---|
+| **Frontend** | Vercel | `https://tu-proyecto.vercel.app` |
+| **Backend API** | Firebase Cloud Functions | `https://api-ht5pvvxzha-uc.a.run.app` |
+| **Base de Datos** | Firestore (Firebase) | `gestion-de-proyectos-39ecc` |
+| **Autenticación** | Firebase Auth | `gestion-de-proyectos-39ecc` |
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+---
 
-### Develop
+## 🚀 Desarrollo Local
 
-To develop all apps and packages, run the following command:
+### Pre-requisitos
+- Node.js >= 20
+- npm >= 11
 
-```
-cd my-turborepo
+### Instalación
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/jkas93/GoldenTower.git
+cd GoldenTower
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+# 2. Instalar dependencias del monorepo completo
+npm install
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+# 3. Configurar variables de entorno del backend
+cp apps/api/.env.example apps/api/.env
+# → Edita apps/api/.env con tus credenciales de Firebase
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+# 4. Configurar variables de entorno del frontend
+cp apps/web/.env.example apps/web/.env.local
+# → Edita apps/web/.env.local con tus credenciales de Firebase
 ```
 
-### Remote Caching
+### Levantar el servidor
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+```bash
+# Levanta frontend (puerto 3000) y backend (puerto 4001) simultáneamente
+npm run dev
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# Si hay conflicto de puertos (procesos colgados), usa:
+npm run dev:clean
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- **Frontend:** http://localhost:3000
+- **Backend:** http://localhost:4001
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+---
 
+## 🌐 Deploy
+
+### Frontend → Vercel (automático)
+Conecta el repo en [vercel.com](https://vercel.com). Vercel detecta el `vercel.json` en `apps/web/` y hace deploy automático en cada push a `main`.
+
+**Variables de entorno necesarias en Vercel:**
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+NEXT_PUBLIC_API_URL=https://api-ht5pvvxzha-uc.a.run.app
 ```
 
-## Useful Links
+### Backend → Firebase (automático vía GitHub Actions)
+El workflow `.github/workflows/deploy-firebase.yml` se activa automáticamente cuando hay cambios en `apps/api/` o `packages/shared/` en la rama `main`.
 
-Learn more about the power of Turborepo:
+**Secrets necesarios en GitHub** (`Settings → Secrets → Actions`):
+```
+FIREBASE_TOKEN          → Token de Firebase CLI (firebase login:ci)
+ADMIN_PROJECT_ID        → ID del proyecto de Firebase
+ADMIN_CLIENT_EMAIL      → Email del Service Account
+ADMIN_PRIVATE_KEY       → Llave privada del Service Account
+FRONTEND_URL            → URL del frontend en producción
+SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS  → Config de correo
+```
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+### Deploy manual del backend
+```bash
+firebase deploy --only functions --project gestion-de-proyectos-39ecc
+```
+
+---
+
+## 📦 Scripts disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Levanta frontend y backend en modo desarrollo |
+| `npm run dev:clean` | Mata puertos ocupados y levanta el entorno |
+| `npm run build` | Compila todos los paquetes para producción |
+| `npm run lint` | Ejecuta ESLint en todo el monorepo |
+
+---
+
+## 🔐 Seguridad
+
+- **Nunca** subas al repositorio: `.env`, `.env.local`, `firebase-service-account.json`
+- Las credenciales de producción van en **GitHub Secrets** (para CI/CD) y en el **panel de Vercel** (para el frontend)
+- Los archivos sensibles están cubiertos por `.gitignore`

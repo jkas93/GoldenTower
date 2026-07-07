@@ -1,9 +1,6 @@
 {
   "framework": "nextjs",
-  "installCommand": "cd ../.. && npm install",
+  "installCommand": "cd ../.. && npm install --workspace=web --workspace=packages/shared --workspace=packages/ui --workspace=packages/eslint-config --workspace=packages/typescript-config --include-workspace-root",
   "buildCommand": "cd ../.. && npx turbo run build --filter=web",
-  "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_API_URL": "https://api-ht5pvvxzha-uc.a.run.app"
-  }
+  "outputDirectory": ".next"
 }

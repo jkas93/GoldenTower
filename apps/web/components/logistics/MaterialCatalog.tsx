@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Material } from "@erp/shared";
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Edit } from "lucide-react";
 import MaterialFormModal from "./MaterialFormModal";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -26,6 +26,7 @@ export default function MaterialCatalog({ canManage }: MaterialCatalogProps) {
 
     useEffect(() => {
         fetchMaterials();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

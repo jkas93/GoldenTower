@@ -16,6 +16,16 @@ import {
     Database
 } from "lucide-react";
 
+interface DuplicateRecord {
+    name: string;
+    email?: string;
+    dni?: string;
+    createdAt?: string;
+    willKeep: boolean;
+    reason?: string;
+    id?: string;
+}
+
 interface AnalysisResult {
     hasDuplicates: boolean;
     summary: {
@@ -24,8 +34,18 @@ interface AnalysisResult {
         emailDuplicatesCount: number;
         totalRecordsToDelete: number;
     };
-    dniDuplicates: any[];
-    emailDuplicates: any[];
+    dniDuplicates: {
+        dni: string;
+        count: number;
+        toDelete: number;
+        records: DuplicateRecord[];
+    }[];
+    emailDuplicates: {
+        email: string;
+        count: number;
+        toDelete: number;
+        records: DuplicateRecord[];
+    }[];
 }
 
 interface CleanupResult {
@@ -33,7 +53,7 @@ interface CleanupResult {
     details: {
         deletedByDni: number;
         deletedByEmail: number;
-        records: any[];
+        records: DuplicateRecord[];
     };
     message: string;
 }
@@ -214,7 +234,7 @@ export default function DatabaseMaintenancePage() {
                                         DNI: {dup.dni} ({dup.count} registros, eliminar {dup.toDelete})
                                     </div>
                                     <div className="space-y-2">
-                                        {dup.records.map((rec: any, j: number) => (
+                                        {dup.records.map((rec: DuplicateRecord, j: number) => (
                                             <div
                                                 key={j}
                                                 className={`flex items-center justify-between p-3 rounded-xl ${rec.willKeep ? 'bg-emerald-100 border border-emerald-200' : 'bg-white border border-red-200'
@@ -247,7 +267,7 @@ export default function DatabaseMaintenancePage() {
                                         Email: {dup.email} ({dup.count} registros, eliminar {dup.toDelete})
                                     </div>
                                     <div className="space-y-2">
-                                        {dup.records.map((rec: any, j: number) => (
+                                        {dup.records.map((rec: DuplicateRecord, j: number) => (
                                             <div
                                                 key={j}
                                                 className={`flex items-center justify-between p-3 rounded-xl ${rec.willKeep ? 'bg-emerald-100 border border-emerald-200' : 'bg-white border border-blue-200'

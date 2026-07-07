@@ -64,6 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             </button>
                         </div>
 
+                        {/* eslint-disable-next-line turbo/no-undeclared-env-vars */}
                         {process.env.NODE_ENV === "development" && (
                             <div className="mt-8 pt-8 border-t border-white/5 text-left">
                                 <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">Error Debug:</p>

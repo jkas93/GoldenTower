@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { UserRole, User } from "@erp/shared";
@@ -17,21 +17,21 @@ export default function UsersPage() {
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
 
+    const fetchUsers = useCallback(async () => {
+        const idToken = await auth.currentUser?.getIdToken();
+        const res = await fetch(`${API_URL}/users`, {
+            headers: { Authorization: `Bearer ${idToken}` },
+        });
+        if (res.ok) setUsers(await res.json());
+    }, [API_URL]);
+
     useEffect(() => {
         if (user && (role === UserRole.GERENTE || role === UserRole.RRHH || role === UserRole.PMO)) {
             fetchUsers();
         } else if (user && role !== null) {
             router.push("/dashboard");
         }
-    }, [user, role, router]);
-
-    const fetchUsers = async () => {
-        const idToken = await auth.currentUser?.getIdToken();
-        const res = await fetch(`${API_URL}/users`, {
-            headers: { Authorization: `Bearer ${idToken}` },
-        });
-        if (res.ok) setUsers(await res.json());
-    };
+    }, [user, role, router, fetchUsers]);
 
     const handleRoleChange = async (uid: string, newRole: string) => {
         setUpdating(uid);

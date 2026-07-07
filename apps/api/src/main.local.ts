@@ -24,13 +24,12 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'https://goldentowerc.vercel.app',
-      'https://goldent-web.vercel.app',
-      'https://golden.simplemarketing.website',
+      'http://localhost:5173',
       'http://localhost:3000',
-      'http://localhost:3001',
+      'https://goldentowerc.vercel.app',
       process.env.FRONTEND_URL,
-    ].filter(Boolean),
+      process.env.FRONTEND_URL_PROD,
+    ].filter(Boolean) as string[],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

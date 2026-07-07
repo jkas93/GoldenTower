@@ -41,8 +41,8 @@ export default function LoginPage() {
                 await signInWithEmailAndPassword(auth, email, password);
             }
             window.location.href = "/dashboard"; // Redirect to dashboard
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
         }
     };
 

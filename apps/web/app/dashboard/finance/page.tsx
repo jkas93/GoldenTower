@@ -2,23 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { UserRole, Purchase, Project } from "@erp/shared";
+import { Purchase, Project } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
 import {
-    CircleDollarSign,
     Plus,
     Search,
     Filter,
     TrendingUp,
     Package,
-    Clock,
-    CheckCircle2,
     AlertCircle
 } from "lucide-react";
 
 export default function FinancePage() {
-    const { user, role } = useAuth();
+    const { user } = useAuth();
     const { showToast } = useToast();
     const [purchases, setPurchases] = useState<Purchase[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
@@ -48,6 +45,7 @@ export default function FinancePage() {
             fetchPurchases();
             fetchProjects();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const fetchPurchases = async () => {
@@ -57,7 +55,7 @@ export default function FinancePage() {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
             if (res.ok) setPurchases(await res.json());
-        } catch (error) {
+        } catch {
             showToast("Error al cargar historial de compras", "error");
         } finally {
             setIsLoading(false);
@@ -80,7 +78,7 @@ export default function FinancePage() {
                     setProjects([]);
                 }
             }
-        } catch (error) {
+        } catch {
             console.error(error);
         }
     };
@@ -116,7 +114,7 @@ export default function FinancePage() {
                 });
                 fetchPurchases();
             }
-        } catch (error) {
+        } catch {
             showToast("Error al registrar compra", "error");
         }
     };
@@ -130,14 +128,7 @@ export default function FinancePage() {
 
     const totalSpent = filteredPurchases.reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
-    const getStatusStyle = (status: string) => {
-        switch (status) {
-            case 'RECIBIDO': return 'bg-green-500/10 text-green-400 border-green-500/20';
-            case 'APROBADO': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-            case 'PAGADO': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-            default: return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
-        }
-    };
+
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">

@@ -6,11 +6,8 @@ import { useRouter } from "next/navigation";
 import {
     Users,
     Briefcase,
-    Settings,
     Clock,
-    CalendarDays,
     DollarSign,
-    TrendingUp
 } from "lucide-react";
 
 import { useDashboardStats } from "@/hooks/useDashboardStats";
@@ -29,7 +26,8 @@ export default function DashboardPage() {
         return <SupervisorDashboard />;
     }
 
-    const MetricCard = ({ title, value, label, icon: Icon, color, percent }: any) => (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const MetricCard = ({ value, label, icon: Icon, color, percent }: any) => (
         // ... (rest of the component)
         <div className={`p-6 rounded-[2rem] border border-border/50 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] group hover:shadow-[0_8px_30px_rgb(212,175,55,0.15)] hover:border-primary/30 transition-all duration-300 relative overflow-hidden`}>
             {/* Background Gradient Decorative */}
@@ -68,9 +66,7 @@ export default function DashboardPage() {
                     </h1>
                     <p className="text-gray-500 font-medium italic">
                         Sistema de Gestión Integral • <span className="text-primary font-bold uppercase tracking-tighter">{role || 'Sin Rol'}</span>
-                        {process.env.NODE_ENV === 'development' && (
-                            <span className="ml-4 text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 uppercase">Debug: {JSON.stringify(role)}</span>
-                        )}
+
                     </p>
                 </div>
                 <div className="flex items-center gap-4 text-right">

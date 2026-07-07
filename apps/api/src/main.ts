@@ -34,13 +34,12 @@ async function bootstrap() {
 
   // CORS: Configuración robusta unificada
   const allowedOrigins = [
-    'https://goldentowerc.vercel.app',
-    'https://goldent-web.vercel.app',
-    'https://golden.simplemarketing.website',
+    'http://localhost:5173',
     'http://localhost:3000',
-    'http://localhost:3001',
-    process.env.FRONTEND_URL
-  ].filter(Boolean);
+    'https://goldentowerc.vercel.app', // Mantener ESTA url
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_PROD,
+  ].filter(Boolean) as string[];
   
   app.enableCors({
     origin: allowedOrigins,

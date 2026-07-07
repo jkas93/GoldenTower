@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { Project } from "@erp/shared";
 import {
@@ -78,9 +78,10 @@ export default function SupervisorDashboard() {
                 const errorData = await res.json();
                 throw new Error(errorData.message || "Error en la respuesta");
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error submitting request:", error);
-            showToast(error.message || "Error al enviar la solicitud", "error");
+            const msg = error instanceof Error ? error.message : "Error al enviar la solicitud";
+            showToast(msg, "error");
             throw error;
         }
     };
@@ -129,10 +130,11 @@ export default function SupervisorDashboard() {
                     <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
                         <div className="p-3 bg-white rounded-xl shadow-sm text-blue-500">
                             {weather?.icon ? (
-                                <img
+                                <Image
                                     src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                                    alt={weather.description}
-                                    className="w-8 h-8"
+                                    alt={weather.description || "Clima"}
+                                    width={32}
+                                    height={32}
                                 />
                             ) : (
                                 <CloudSun className="w-8 h-8" />

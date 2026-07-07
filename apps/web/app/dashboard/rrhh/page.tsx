@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { UserRole, Attendance, Incident, EmployeeSchema, CreateEmployeeDto } from "@erp/shared";
+import { UserRole, Incident, CreateEmployeeDto } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
-import { Users, Clock, AlertCircle, FileText, CheckCircle, XCircle, Edit, Trash, MoreVertical, Eye, UserPlus } from "lucide-react";
+import { Users, Clock, AlertCircle, CheckCircle, XCircle, Trash, MoreVertical, Eye } from "lucide-react";
 
 export default function RRHHPage() {
     const { user, role } = useAuth();
     const router = useRouter();
     const { showToast } = useToast();
     const [employees, setEmployees] = useState<(CreateEmployeeDto & { id: string; status?: string; hasLaborProfile?: boolean })[]>([]);
-    const [attendance, setAttendance] = useState<Attendance[]>([]);
     const [incidents, setIncidents] = useState<Incident[]>([]);
     const [activeTab, setActiveTab] = useState<'employees' | 'attendance' | 'incidents'>('employees');
 
@@ -21,25 +20,15 @@ export default function RRHHPage() {
     const [isIncidentModalOpen, setIsIncidentModalOpen] = useState(false);
 
     // Forms
-    const [newIncident, setNewIncident] = useState({ employeeId: "", type: "VACACIONES" as any, startDate: "", endDate: "", description: "" });
+    const [newIncident, setNewIncident] = useState({ employeeId: "", type: "VACACIONES" as string, startDate: "", endDate: "", description: "" });
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
 
-    useEffect(() => {
-        if (user) {
-            fetchEmployees();
-            fetchIncidents();
-        } else {
-            router.push("/login");
-        }
-    }, [user, router]);
-
-    const fetchEmployees = async () => {
+    const fetchEmployees = useCallback(async () => {
         try {
             const currentUser = auth.currentUser;
             if (!currentUser) return;
             const idToken = await currentUser.getIdToken();
-            // Default limit 50 for initial load
             const res = await fetch(`${API_URL}/rrhh/employees?limit=50`, {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
@@ -53,12 +42,12 @@ export default function RRHHPage() {
                     setEmployees([]);
                 }
             }
-        } catch (error) {
+        } catch {
             showToast("Error al cargar empleados", "error");
         }
-    };
+    }, [API_URL, showToast]);
 
-    const fetchIncidents = async () => {
+    const fetchIncidents = useCallback(async () => {
         try {
             const currentUser = auth.currentUser;
             if (!currentUser) return;
@@ -67,10 +56,19 @@ export default function RRHHPage() {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
             if (res.ok) setIncidents(await res.json());
-        } catch (error) {
+        } catch {
             console.error(error);
         }
-    };
+    }, [API_URL]);
+
+    useEffect(() => {
+        if (user) {
+            fetchEmployees();
+            fetchIncidents();
+        } else {
+            router.push("/login");
+        }
+    }, [user, router, fetchEmployees, fetchIncidents]);
 
     const handleCreateEmployee = () => {
         router.push("/dashboard/rrhh/new");
@@ -96,7 +94,7 @@ export default function RRHHPage() {
             if (res.ok) {
                 showToast("Asistencia registrada", "success");
             }
-        } catch (error) {
+        } catch {
             showToast("Error al registrar asistencia", "error");
         }
     };
@@ -121,7 +119,7 @@ export default function RRHHPage() {
                 setIsIncidentModalOpen(false);
                 fetchIncidents();
             }
-        } catch (error) {
+        } catch {
             showToast("Error al registrar incidencia", "error");
         }
     };
@@ -144,7 +142,7 @@ export default function RRHHPage() {
                 showToast(`Incidencia ${status.toLowerCase()}`, "success");
                 fetchIncidents();
             }
-        } catch (error) {
+        } catch {
             showToast("Error al actualizar estado", "error");
         }
     };
@@ -172,7 +170,7 @@ export default function RRHHPage() {
                 const error = await res.json();
                 showToast(error.message || "Error al eliminar la invitación", "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Error de conexión", "error");
         }
     };

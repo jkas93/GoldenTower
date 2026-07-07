@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { AlertCircle, CheckCircle2, Circle, Clock, Target } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Circle, Clock } from 'lucide-react';
 
 /**
  * ============================================================================

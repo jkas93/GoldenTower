@@ -9,7 +9,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import { UserRole } from "@erp/shared";
 
 export default function EmployeeEditPage() {
-    const { user, role } = useAuth();
+    const { user } = useAuth();
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
@@ -46,6 +46,7 @@ export default function EmployeeEditPage() {
         } else if (!user) {
             router.push("/login");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, params.id, router, isCreating]);
 
     const fetchEmployee = async () => {
@@ -76,7 +77,7 @@ export default function EmployeeEditPage() {
                 showToast("Empleado no encontrado", "error");
                 router.push("/dashboard/rrhh");
             }
-        } catch (error) {
+        } catch {
             showToast("Error al cargar empleado", "error");
         } finally {
             setLoading(false);
@@ -133,8 +134,9 @@ export default function EmployeeEditPage() {
                 const err = await res.json();
                 showToast(err.message || "Error al actualizar empleado", "error");
             }
-        } catch (error: any) {
-            showToast(error.message || "Error al guardar cambios", "error");
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : "Error al guardar cambios";
+            showToast(msg, "error");
         } finally {
             setSaving(false);
         }
@@ -264,7 +266,7 @@ export default function EmployeeEditPage() {
                         <select
                             className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-gray-900 font-medium"
                             value={formData.pensionSystem || 'AFP'}
-                            onChange={(e) => setFormData({ ...formData, pensionSystem: e.target.value as any })}
+                            onChange={(e) => setFormData({ ...formData, pensionSystem: e.target.value as "AFP" | "SNP" })}
                         >
                             <option value="AFP">AFP</option>
                             <option value="SNP">SNP</option>

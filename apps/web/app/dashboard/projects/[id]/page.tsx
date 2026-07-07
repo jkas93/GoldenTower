@@ -7,7 +7,7 @@ import { Project, UserRole, ProjectTask, TaskType, ProgressLog, Purchase, Projec
 import { auth, storage } from "@/lib/firebase/clientApp";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/useToast";
-import { Plus, Check, Clock, AlertTriangle, Trash2, Edit, ClipboardCheck, Activity, Upload, X, Calendar, DollarSign, BarChart3 } from "lucide-react";
+import { Plus, Check, Trash2, Edit, ClipboardCheck, Activity, Upload, X, Calendar } from "lucide-react";
 import { HealthDonutChart, MilestoneMarker, ProjectHealthIndicator, StatusBadge } from "@/components/ui/start-project-components";
 
 export default function ProjectGanttPage({ params }: { params: Promise<{ id: string }> }) {
@@ -162,6 +162,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [interaction, tasks]);
 
     useEffect(() => {
@@ -177,6 +178,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
             fetchMilestones();
             fetchProjectHealth();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, loading, role, projectId, router]);
 
     const fetchProgressLogs = async () => {
@@ -221,7 +223,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
 
         try {
             const idToken = await auth.currentUser?.getIdToken();
-            let photoUrls: string[] = [];
+            const photoUrls: string[] = [];
 
             if (imageFile) {
                 setIsUploading(true);
@@ -860,7 +862,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                     {tasks.length === 0 && (
                         <div className="py-20 text-center text-gray-500 text-sm">
                             <p className="mb-2">Aún no hay actividades planificadas.</p>
-                            <p className="text-xs text-gray-600">Utiliza el botón "Nueva Tarea" para comenzar.</p>
+                            <p className="text-xs text-gray-600">Utiliza el botón &quot;Nueva Tarea&quot; para comenzar.</p>
                         </div>
                     )}
                 </div>
@@ -1315,7 +1317,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-300 leading-relaxed font-medium bg-white/5 p-4 rounded-2xl border border-white/5 italic">
-                                                    "{log.notes || 'Sin observaciones registradas'}"
+                                                    &quot;{log.notes || 'Sin observaciones registradas'}&quot;
                                                 </p>
 
                                                 {/* Multimedia Section Placeholder */}

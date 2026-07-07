@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Plus, Trash2, PackageCheck } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import { Material, MaterialRequestItem } from "@erp/shared";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
@@ -24,8 +24,6 @@ type FormItem = {
 export default function MaterialRequestModal({
     isOpen,
     onClose,
-    projectId,
-    supervisorId,
     onSubmit
 }: MaterialRequestModalProps) {
     const { user } = useAuth();
@@ -43,6 +41,7 @@ export default function MaterialRequestModal({
         if (isOpen) {
             fetchMaterials();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
     const fetchMaterials = async () => {
@@ -74,12 +73,12 @@ export default function MaterialRequestModal({
         setItems(items.filter((_, i) => i !== index));
     };
 
-    const updateItem = (index: number, field: keyof FormItem, value: any) => {
+    const updateItem = (index: number, field: keyof FormItem, value: string | number) => {
         const updated = [...items];
         const currentItem: FormItem = { ...updated[index] } as FormItem;
 
         // Update the field
-        (currentItem as any)[field] = value;
+        Object.assign(currentItem, { [field]: value });
 
         // If material changed, update materialName
         if (field === "materialId" && value) {

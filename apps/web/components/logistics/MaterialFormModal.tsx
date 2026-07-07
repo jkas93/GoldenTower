@@ -34,7 +34,7 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
             setFormData({
                 name: material.name,
                 unit: material.unit,
-                category: material.category as any,
+                category: material.category as "PRELIMINARES" | "ESTRUCTURA" | "ALBAÑILERIA" | "ACABADOS" | "INSTALACIONES" | "EXTERIORES" | "OTROS",
                 description: material.description || "",
                 unitPrice: material.unitPrice
             });
@@ -154,7 +154,7 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
                             </label>
                             <select
                                 value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value as "PRELIMINARES" | "ESTRUCTURA" | "ALBAÑILERIA" | "ACABADOS" | "INSTALACIONES" | "EXTERIORES" | "OTROS" })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                             >
                                 {categories.map(cat => (

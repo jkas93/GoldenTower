@@ -4,7 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { Bell, Search, User, Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 
 export default function DashboardLayout({
     children,

@@ -54,7 +54,7 @@ export default function UserInviteModal({ isOpen, onClose, onSuccess }: UserInvi
                 const error = await res.json();
                 showToast(error.message || "Error al invitar al usuario", "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Error de conexión", "error");
         } finally {
             setLoading(false);

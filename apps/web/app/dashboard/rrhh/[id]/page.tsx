@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
 import { CreateEmployeeDto } from "@erp/shared";
 import {
-    ArrowLeft, User, Mail, Phone, Calendar,
+    ArrowLeft, Mail, Phone, Calendar,
     DollarSign, FileText, Briefcase, MapPin,
     ShieldCheck, CreditCard, Clock, ChevronRight,
     Edit, Download, Send
@@ -32,6 +32,7 @@ export default function EmployeeDetailPage() {
         } else if (!user) {
             router.push("/login");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, params.id, router]);
 
     const fetchEmployee = async () => {
@@ -48,7 +49,7 @@ export default function EmployeeDetailPage() {
                 showToast("Empleado no encontrado", "error");
                 router.push("/dashboard/rrhh");
             }
-        } catch (error) {
+        } catch {
             showToast("Error al cargar empleado", "error");
         } finally {
             setLoading(false);

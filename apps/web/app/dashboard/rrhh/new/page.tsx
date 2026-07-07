@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
 import { UserRole, EmployeeSchema } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
@@ -20,7 +19,6 @@ import {
 
 export default function NewEmployeePage() {
     const router = useRouter();
-    const { role } = useAuth();
     const { showToast } = useToast();
     const [loading, setLoading] = useState(false);
 
@@ -98,8 +96,9 @@ export default function NewEmployeePage() {
                 const err = await employeeRes.json();
                 throw new Error(err.message || "Error al registrar colaborador");
             }
-        } catch (error: any) {
-            showToast(error.message || "Error en el registro", "error");
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : "Error en el registro";
+            showToast(msg, "error");
         } finally {
             setLoading(false);
         }

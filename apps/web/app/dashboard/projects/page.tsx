@@ -39,6 +39,7 @@ export default function ProjectsPage() {
                 fetchStaff();
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, role]);
 
     const fetchProjects = async () => {
@@ -61,7 +62,7 @@ export default function ProjectsPage() {
                 if (!Array.isArray(data)) console.warn('Expected array or {projects: []} but got', data);
             }
 
-        } catch (error) {
+        } catch {
             console.error(error);
             showToast("Error de conexión con el servidor", "error");
         }
@@ -113,7 +114,7 @@ export default function ProjectsPage() {
                 const data = await res.json();
                 showToast(data.message || "Error al crear proyecto", "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Error inesperado en el servidor", "error");
         }
     };

@@ -10,7 +10,7 @@ import { Plus, Trash2, Search, Book, Clock } from "lucide-react";
 export default function CatalogPage() {
     const { user, role } = useAuth();
     const { showToast } = useToast();
-    const [activities, setActivities] = useState<any[]>([]);
+    const [activities, setActivities] = useState<(CreateActivityMasterDto & { id: string })[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [newActivity, setNewActivity] = useState<Partial<CreateActivityMasterDto>>({
@@ -25,6 +25,7 @@ export default function CatalogPage() {
 
     useEffect(() => {
         if (user) fetchActivities();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const fetchActivities = async () => {
@@ -38,7 +39,7 @@ export default function CatalogPage() {
             } else {
                 showToast("Error al cargar el catálogo", "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Error de conexión", "error");
         }
     };
@@ -72,7 +73,7 @@ export default function CatalogPage() {
                 const data = await res.json();
                 showToast(data.message || "Error al crear actividad", "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Fallo en el servidor", "error");
         }
     };
@@ -89,7 +90,7 @@ export default function CatalogPage() {
                 showToast("Actividad eliminada", "info");
                 fetchActivities();
             }
-        } catch (error) {
+        } catch {
             showToast("Error al eliminar", "error");
         }
     };
@@ -194,7 +195,7 @@ export default function CatalogPage() {
                                         required
                                         className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-primary transition-all font-medium appearance-none text-gray-900 cursor-pointer"
                                         value={newActivity.category}
-                                        onChange={e => setNewActivity({ ...newActivity, category: e.target.value as any })}
+                                        onChange={e => setNewActivity({ ...newActivity, category: e.target.value as "PRELIMINARES" | "ESTRUCTURA" | "ALBAÑILERIA" | "ACABADOS" | "INSTALACIONES" | "EXTERIORES" | "OTROS" })}
                                     >
                                         {categories.map(cat => <option key={cat} value={cat} className="bg-white text-gray-900">{cat}</option>)}
                                     </select>

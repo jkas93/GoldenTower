@@ -38,6 +38,7 @@ jobs:
       - name: Instalar dependencias del API (con el shared local)
         run: |
           cd apps/api
+          npm install ./erp-shared-0.0.0.tgz
           npm install
 
       - name: Escribir .env del API (desde GitHub Secrets)

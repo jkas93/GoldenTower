@@ -128,7 +128,7 @@ export default function FinancePage() {
         return matchesSearch && matchesProject;
     });
 
-    const totalSpent = filteredPurchases.reduce((sum, p) => sum + Number(p.amount), 0);
+    const totalSpent = filteredPurchases.reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
     const getStatusStyle = (status: string) => {
         switch (status) {
@@ -233,7 +233,7 @@ export default function FinancePage() {
                                 </td>
                                 <td className="py-4 px-6 text-right font-mono text-gray-900 font-bold text-lg">
                                     <span className="text-xs text-gray-400 mr-2">{p.currency}</span>
-                                    ${p.amount.toLocaleString()}
+                                    ${(p.amount || 0).toLocaleString()}
                                 </td>
                             </tr>
                         ))}

@@ -493,11 +493,11 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
 
                 // Real Calculation: Find the LATEST progress log for THIS task on or BEFORE this day
                 const taskLogs = progressLogs
-                    .filter(log => log.taskId === task.id && log.date <= dStr)
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                    .filter(log => log.taskId === task.id && log.date && log.date <= dStr)
+                    .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
 
                 if (taskLogs.length > 0 && taskLogs[0]) {
-                    totalReal += taskLogs[0].progressPercentage;
+                    totalReal += taskLogs[0].progressPercentage || 0;
                 } else {
                     // If no logs, assume 0 for the start, but if it's currently marked as completed in state, 
                     // should we trust the task.progress? Usually S-Curve real is better built ONLY from logs.
@@ -1301,14 +1301,14 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                             ) : (
                                 progressLogs
                                     .filter(log => log.taskId === selectedTaskForGallery.id)
-                                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                                    .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
                                     .map((log) => (
                                         <div key={log.id} className="relative pl-8 border-l border-white/10 pb-8 last:pb-0">
                                             <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
                                             <div className="space-y-4">
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-xs font-black text-white/50 uppercase tracking-widest font-mono">
-                                                        {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                        {new Date(log.date || 0).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </span>
                                                     <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-500/20">
                                                         AVANCE: {log.progressPercentage}%

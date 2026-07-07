@@ -381,7 +381,7 @@ export default function RRHHPage() {
                                                 inc.type === 'PERMISO_MEDICO' ? 'bg-orange-50 text-orange-600 border-orange-100' :
                                                     'bg-gray-100 text-gray-500 border-gray-200'
                                                 }`}>
-                                                {inc.type.replace('_', ' ')}
+                                                {inc.type ? inc.type.replace('_', ' ') : 'N/A'}
                                             </span>
                                         </td>
                                         <td className="font-bold text-gray-900 uppercase tracking-tighter">{employees.find(e => e.id === inc.employeeId)?.name || 'Cargando...'}</td>

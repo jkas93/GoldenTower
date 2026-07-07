@@ -24,6 +24,10 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
+      'https://goldentowerc.vercel.app',
+      'https://goldentowerr.vercel.app',
+      'https://goldent-web.vercel.app',
+      'https://golden.simplemarketing.website',
       'http://localhost:3000',
       'http://localhost:3001',
       process.env.FRONTEND_URL,

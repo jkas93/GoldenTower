@@ -79,7 +79,7 @@ export default function FinancePage() {
                 }
             }
         } catch {
-            console.error(error);
+            // fetch projects failed silently
         }
     };
 

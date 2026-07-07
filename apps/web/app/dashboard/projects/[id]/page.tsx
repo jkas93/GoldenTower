@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { Project, UserRole, ProjectTask, TaskType, ProgressLog, Purchase, ProjectMilestone } from "@erp/shared";
+import { Project, UserRole, ProjectTask, TaskType, ProgressLog, Purchase, ProjectMilestone, ActivityMaster, CreateProgressLogDto } from "@erp/shared";
 import { auth, storage } from "@/lib/firebase/clientApp";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/useToast";
@@ -31,7 +31,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
         tasksCompleted: number;
         tasksTotal: number;
     } | null>(null);
-    const [catalog, setCatalog] = useState<any[]>([]);
+    const [catalog, setCatalog] = useState<ActivityMaster[]>([]);
     const [loadingData, setLoadingData] = useState(true);
 
     // Modal & Form State
@@ -58,7 +58,7 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
     // Progress Logging State
     const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
     const [selectedTaskForProgress, setSelectedTaskForProgress] = useState<ProjectTask | null>(null);
-    const [newProgressLog, setNewProgressLog] = useState<any>({
+    const [newProgressLog, setNewProgressLog] = useState<Partial<CreateProgressLogDto>>({
         progressPercentage: 0,
         date: new Date().toISOString().split('T')[0],
         notes: ''

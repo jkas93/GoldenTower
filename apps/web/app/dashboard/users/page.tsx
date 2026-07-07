@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@erp/shared";
+import { UserRole, User } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { UserPlus } from "lucide-react";
 import UserInviteModal from "@/components/users/UserInviteModal";
@@ -11,7 +11,7 @@ import UserInviteModal from "@/components/users/UserInviteModal";
 export default function UsersPage() {
     const { user, role } = useAuth();
     const router = useRouter();
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<(User & { status?: string })[]>([]);
     const [updating, setUpdating] = useState<string | null>(null);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 

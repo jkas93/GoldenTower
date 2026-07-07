@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter, useParams } from "next/navigation";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
+import { CreateEmployeeDto } from "@erp/shared";
 import {
     ArrowLeft, User, Mail, Phone, Calendar,
     DollarSign, FileText, Briefcase, MapPin,
@@ -19,7 +20,7 @@ export default function EmployeeDetailPage() {
     const router = useRouter();
     const params = useParams();
     const { showToast } = useToast();
-    const [employee, setEmployee] = useState<any>(null);
+    const [employee, setEmployee] = useState<(CreateEmployeeDto & { id: string; phone?: string; address?: string; status?: string }) | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<TabType>('resumen');
 

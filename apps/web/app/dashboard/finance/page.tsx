@@ -21,7 +21,7 @@ export default function FinancePage() {
     const { user, role } = useAuth();
     const { showToast } = useToast();
     const [purchases, setPurchases] = useState<Purchase[]>([]);
-    const [projects, setProjects] = useState<any[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 

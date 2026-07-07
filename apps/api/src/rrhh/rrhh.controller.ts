@@ -3,7 +3,7 @@ import { RRHHService } from './rrhh.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole, EmployeeSchema, CreateEmployeeDto } from '@erp/shared';
+import { UserRole, EmployeeSchema, CreateEmployeeDto, CreateAttendanceDto, AttendanceSchema, CreateIncidentDto, IncidentSchema } from '@erp/shared';
 
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
@@ -47,7 +47,7 @@ export class RRHHController {
 
     @Patch('employees/:id')
     @Roles(UserRole.GERENTE, UserRole.RRHH)
-    async update(@Param('id') id: string, @Body() data: any) {
+    async update(@Param('id') id: string, @Body() data: Partial<CreateEmployeeDto>) {
         await this.rrhhService.updateEmployee(id, data);
         return { message: 'Employee updated' };
     }
@@ -68,7 +68,8 @@ export class RRHHController {
     // --- Attendance Endpoints ---
     @Post('attendance')
     @Roles(UserRole.GERENTE, UserRole.RRHH)
-    async recordAttendance(@Body() data: any) {
+    @UsePipes(new ZodValidationPipe(AttendanceSchema))
+    async recordAttendance(@Body() data: CreateAttendanceDto) {
         const id = await this.rrhhService.recordAttendance(data);
         return { id, message: 'Attendance recorded' };
     }
@@ -82,7 +83,8 @@ export class RRHHController {
     // --- Incident Endpoints ---
     @Post('incidents')
     @Roles(UserRole.GERENTE, UserRole.RRHH)
-    async createIncident(@Body() data: any) {
+    @UsePipes(new ZodValidationPipe(IncidentSchema))
+    async createIncident(@Body() data: CreateIncidentDto) {
         const id = await this.rrhhService.createIncident(data);
         return { id, message: 'Incident created' };
     }
@@ -99,6 +101,5 @@ export class RRHHController {
         await this.rrhhService.updateIncidentStatus(id, status);
         return { message: 'Incident status updated' };
     }
-
 
 }

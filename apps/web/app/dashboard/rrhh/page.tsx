@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { UserRole, Attendance, Incident, EmployeeSchema } from "@erp/shared";
+import { UserRole, Attendance, Incident, EmployeeSchema, CreateEmployeeDto } from "@erp/shared";
 import { auth } from "@/lib/firebase/clientApp";
 import { useToast } from "@/hooks/useToast";
 import { Users, Clock, AlertCircle, FileText, CheckCircle, XCircle, Edit, Trash, MoreVertical, Eye, UserPlus } from "lucide-react";
@@ -12,7 +12,7 @@ export default function RRHHPage() {
     const { user, role } = useAuth();
     const router = useRouter();
     const { showToast } = useToast();
-    const [employees, setEmployees] = useState<any[]>([]);
+    const [employees, setEmployees] = useState<(CreateEmployeeDto & { id: string })[]>([]);
     const [attendance, setAttendance] = useState<Attendance[]>([]);
     const [incidents, setIncidents] = useState<Incident[]>([]);
     const [activeTab, setActiveTab] = useState<'employees' | 'attendance' | 'incidents'>('employees');

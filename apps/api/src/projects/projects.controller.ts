@@ -3,7 +3,7 @@ import { ProjectsService } from './projects.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole, Project } from '@erp/shared';
+import { UserRole, Project, ProjectMilestone, ProjectTask } from '@erp/shared';
 
 import { ProjectSchema, CreateProjectDto } from '@erp/shared';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
@@ -51,12 +51,12 @@ export class ProjectsController {
     @Roles(UserRole.GERENTE, UserRole.PMO, UserRole.COORDINADOR)
     async createMilestone(
         @Param('projectId') projectId: string,
-        @Body() milestoneData: any,
+        @Body() milestoneData: Partial<ProjectMilestone>,
         @Request() req: any
     ) {
         const id = await this.projectsService.createMilestone(
             projectId,
-            milestoneData,
+            milestoneData as any,
             req.user.uid,
             req.user.role
         );
@@ -92,8 +92,8 @@ export class ProjectsController {
     // Task Endpoints (DEBEN IR ANTES DE :id genérico)
     @Post(':projectId/tasks')
     @Roles(UserRole.GERENTE, UserRole.PMO, UserRole.COORDINADOR, UserRole.SUPERVISOR)
-    async addTask(@Param('projectId') projectId: string, @Body() taskData: any, @Request() req: any) {
-        const id = await this.projectsService.addTask(projectId, taskData, req.user.uid, req.user.role);
+    async addTask(@Param('projectId') projectId: string, @Body() taskData: Partial<ProjectTask>, @Request() req: any) {
+        const id = await this.projectsService.addTask(projectId, taskData as any, req.user.uid, req.user.role);
         return { id, message: 'Task added successfully' };
     }
 
@@ -107,10 +107,10 @@ export class ProjectsController {
     async updateTask(
         @Param('projectId') projectId: string,
         @Param('taskId') taskId: string,
-        @Body() taskData: any,
+        @Body() taskData: Partial<ProjectTask>,
         @Request() req: any
     ) {
-        await this.projectsService.updateTask(projectId, taskId, taskData, req.user.uid, req.user.role);
+        await this.projectsService.updateTask(projectId, taskId, taskData as any, req.user.uid, req.user.role);
         return { message: 'Task updated successfully' };
     }
 

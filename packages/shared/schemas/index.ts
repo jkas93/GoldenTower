@@ -98,6 +98,7 @@ export const PurchaseSchema = z.object({
     currency: z.enum(['USD', 'PEN']).default('PEN'),
     status: z.enum(['PENDIENTE', 'APROBADO', 'PAGADO', 'RECIBIDO']).default('PENDIENTE'),
     invoiceNumber: z.string().optional(),
+    invoiceUrl: z.string().url('Debe ser una URL válida').optional(),
     date: z.string().min(1), // YYYY-MM-DD
 });
 

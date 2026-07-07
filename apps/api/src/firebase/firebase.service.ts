@@ -43,12 +43,15 @@ export class FirebaseService implements OnModuleInit {
 
         try {
           if (!admin.apps.length) {
+            const storageBucket = this.configService.get<string>('ADMIN_STORAGE_BUCKET') || `${projectId}.appspot.com`;
+
             this.firebaseApp = admin.initializeApp({
               credential: admin.credential.cert({
                 projectId,
                 privateKey,
                 clientEmail,
               }),
+              storageBucket,
             });
             this.logger.log(
               `✅ Firebase App inicializada: ${this.firebaseApp.name}`,
@@ -103,6 +106,15 @@ export class FirebaseService implements OnModuleInit {
       );
     }
     return admin.firestore(this.firebaseApp);
+  }
+
+  getStorage(): admin.storage.Storage {
+    if (!this.firebaseApp) {
+      throw new Error(
+        'Firebase no está inicializado. Verifica los logs de arranque.',
+      );
+    }
+    return admin.storage(this.firebaseApp);
   }
 
   getInitializationTime(): number {

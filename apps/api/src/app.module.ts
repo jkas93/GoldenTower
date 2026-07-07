@@ -14,6 +14,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MailModule } from './mail/mail.module';
 import { HealthModule } from './health/health.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { HealthModule } from './health/health.module';
     FinanceModule,
     MaterialsModule,
     MaterialRequestsModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

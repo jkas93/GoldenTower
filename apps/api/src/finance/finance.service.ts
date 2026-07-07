@@ -23,6 +23,10 @@ export class FinanceService {
     );
   }
 
+  async updatePurchase(id: string, data: Partial<any>): Promise<void> {
+    await this.purchasesRepo.update(id, data);
+  }
+
   async findPurchasesByProject(projectId: string): Promise<any[]> {
     const purchases = await this.purchasesRepo.findByQuery((c) =>
       c.where('projectId', '==', projectId),

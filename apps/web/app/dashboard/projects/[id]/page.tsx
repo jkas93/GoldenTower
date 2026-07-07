@@ -9,6 +9,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/useToast";
 import { Plus, Check, Trash2, Edit, ClipboardCheck, Activity, Upload, X, Calendar } from "lucide-react";
 import { HealthDonutChart, MilestoneMarker, ProjectHealthIndicator, StatusBadge } from "@/components/ui/start-project-components";
+import { FileUpload } from "@/components/ui/FileUpload";
 
 export default function ProjectGanttPage({ params }: { params: Promise<{ id: string }> }) {
     // Unwrap params using use() hook or useEffect. Next.js 15+ recommends unwrapping.
@@ -58,10 +59,11 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
     // Progress Logging State
     const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
     const [selectedTaskForProgress, setSelectedTaskForProgress] = useState<ProjectTask | null>(null);
-    const [newProgressLog, setNewProgressLog] = useState<Partial<CreateProgressLogDto>>({
+    const [newProgressLog, setNewProgressLog] = useState<Partial<CreateProgressLogDto> & { photoUrls?: string[] }>({
         progressPercentage: 0,
         date: new Date().toISOString().split('T')[0],
-        notes: ''
+        notes: '',
+        photoUrls: []
     });
     const [progressLogs, setProgressLogs] = useState<ProgressLog[]>([]);
     const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -69,7 +71,6 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
     // File Upload State
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
     // Interaction State for Drag & Resize
@@ -216,23 +217,14 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
         if (!selectedTaskForProgress) return;
 
         // Validation: Evidence required for progress > 0
-        if ((newProgressLog.progressPercentage ?? 0) > 0 && !imageFile) {
+        if ((newProgressLog.progressPercentage ?? 0) > 0 && (!newProgressLog.photoUrls || newProgressLog.photoUrls.length === 0)) {
             showToast("Para reportar avance, es obligatorio adjuntar una foto como evidencia.", "warning");
             return;
         }
 
         try {
             const idToken = await auth.currentUser?.getIdToken();
-            const photoUrls: string[] = [];
-
-            if (imageFile) {
-                setIsUploading(true);
-                const storageRef = ref(storage, `progress_logs/${projectId}/${selectedTaskForProgress.id}/${Date.now()}_${imageFile.name}`);
-                await uploadBytes(storageRef, imageFile);
-                const downloadURL = await getDownloadURL(storageRef);
-                photoUrls.push(downloadURL);
-                setIsUploading(false);
-            }
+            const photoUrls = newProgressLog.photoUrls || [];
 
             const res = await fetch(`${API_URL}/projects/${projectId}/progress-logs`, {
                 method: "POST",
@@ -250,7 +242,10 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
 
             if (res.ok) {
                 setIsProgressModalOpen(false);
-                setImageFile(null); // Reset file
+                setNewProgressLog({
+                    ...newProgressLog,
+                    photoUrls: []
+                });
                 fetchProjectData(); // Refresh tasks
                 fetchProgressLogs(); // Refresh logs for S-Curve
                 showToast("Avance registrado correctamente", "success");
@@ -768,7 +763,8 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                                                                 setNewProgressLog({
                                                                     progressPercentage: task.progress || 0,
                                                                     date: new Date().toISOString().split('T')[0],
-                                                                    notes: ''
+                                                                    notes: '',
+                                                                    photoUrls: []
                                                                 });
                                                                 setIsProgressModalOpen(true);
                                                             }}
@@ -1191,64 +1187,25 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
                                 <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">
                                     Evidencia Fotográfica {(newProgressLog.progressPercentage ?? 0) > 0 && <span className="text-red-500">*</span>}
                                 </label>
-                                <div className="flex gap-4">
-                                    <div className="relative group">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="file-upload"
-                                            className="hidden"
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files[0]) {
-                                                    setImageFile(e.target.files[0]);
-                                                }
-                                            }}
-                                        />
-                                        <label
-                                            htmlFor="file-upload"
-                                            className={`w-24 h-24 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${imageFile
-                                                ? 'border-green-500 bg-green-500/10'
-                                                : 'border-white/10 bg-white/5 hover:border-green-500/50 hover:text-green-400 text-gray-500'
-                                                }`}
-                                        >
-                                            {imageFile ? (
-                                                <>
-                                                    <Check className="w-6 h-6 text-green-500" />
-                                                    <span className="text-[8px] font-bold text-green-500 uppercase">Listo</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Upload className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                                                    <span className="text-[8px] font-bold uppercase">Subir Foto</span>
-                                                </>
-                                            )}
-                                        </label>
-                                        {imageFile && (
-                                            <button
-                                                onClick={() => setImageFile(null)}
-                                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-lg"
-                                            >
-                                                <X className="w-3 h-3" />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <div className="flex-1 space-y-2">
-                                        {imageFile ? (
-                                            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${URL.createObjectURL(imageFile)})` }}></div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-bold text-white truncate">{imageFile.name}</p>
-                                                    <p className="text-[10px] text-gray-500">{(imageFile.size / 1024).toFixed(0)} KB</p>
-                                                </div>
+                                <FileUpload 
+                                    onUpload={(url) => setNewProgressLog({ ...newProgressLog, photoUrls: [...(newProgressLog.photoUrls || []), url] })} 
+                                    folder={`progress_logs/${projectId}/${selectedTaskForProgress.id}`}
+                                />
+                                {newProgressLog.photoUrls && newProgressLog.photoUrls.length > 0 && (
+                                    <div className="flex gap-2 mt-2 flex-wrap">
+                                        {newProgressLog.photoUrls.map((url, idx) => (
+                                            <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/10 group">
+                                                <img src={url} alt={`Evidencia ${idx + 1}`} className="w-full h-full object-cover" />
+                                                <button
+                                                    onClick={() => setNewProgressLog({ ...newProgressLog, photoUrls: newProgressLog.photoUrls?.filter((_, i) => i !== idx) })}
+                                                    className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <X className="w-4 h-4 text-white" />
+                                                </button>
                                             </div>
-                                        ) : (
-                                            <div className="h-full bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-center text-[10px] text-gray-600 font-bold uppercase italic tracking-tighter text-center">
-                                                Es obligatorio subir una foto para validar cualquier reporte de avance positivo.
-                                            </div>
-                                        )}
+                                        ))}
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             <div className="space-y-2">
@@ -1322,10 +1279,21 @@ export default function ProjectGanttPage({ params }: { params: Promise<{ id: str
 
                                                 {/* Multimedia Section Placeholder */}
                                                 <div className="grid grid-cols-3 gap-3">
-                                                    <div className="aspect-square bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center group overflow-hidden relative">
-                                                        <Activity className="w-6 h-6 text-gray-800 opacity-20" />
-                                                        <span className="absolute bottom-2 text-[8px] font-bold text-gray-700 uppercase">Sin Imagen</span>
-                                                    </div>
+                                                    {log.photoUrls && log.photoUrls.length > 0 ? (
+                                                        log.photoUrls.map((url, idx) => (
+                                                            <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/5 rounded-xl border border-white/10 overflow-hidden relative group">
+                                                                <img src={url} alt={`Evidencia ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                    <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-black/50 px-2 py-1 rounded-md">Ver Completa</span>
+                                                                </div>
+                                                            </a>
+                                                        ))
+                                                    ) : (
+                                                        <div className="aspect-square bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center group overflow-hidden relative">
+                                                            <Activity className="w-6 h-6 text-gray-800 opacity-20" />
+                                                            <span className="absolute bottom-2 text-[8px] font-bold text-gray-700 uppercase">Sin Imagen</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

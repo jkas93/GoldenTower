@@ -11,8 +11,10 @@ import {
     Filter,
     TrendingUp,
     Package,
-    AlertCircle
+    AlertCircle,
+    FileText
 } from "lucide-react";
+import { FileUpload } from "@/components/ui/FileUpload";
 
 export default function FinancePage() {
     const { user } = useAuth();
@@ -35,6 +37,7 @@ export default function FinancePage() {
         amount: "",
         currency: "PEN",
         status: "PENDIENTE",
+        invoiceUrl: "",
         date: new Date().toISOString().split('T')[0]
     });
 
@@ -110,6 +113,7 @@ export default function FinancePage() {
                     amount: "",
                     currency: "PEN",
                     status: "PENDIENTE",
+                    invoiceUrl: "",
                     date: new Date().toISOString().split('T')[0]
                 });
                 fetchPurchases();
@@ -223,8 +227,17 @@ export default function FinancePage() {
                                     </span>
                                 </td>
                                 <td className="py-4 px-6 text-right font-mono text-gray-900 font-bold text-lg">
-                                    <span className="text-xs text-gray-400 mr-2">{p.currency}</span>
-                                    ${(p.amount || 0).toLocaleString()}
+                                    <div className="flex flex-col items-end gap-1">
+                                        <div>
+                                            <span className="text-xs text-gray-400 mr-2">{p.currency}</span>
+                                            ${(p.amount || 0).toLocaleString()}
+                                        </div>
+                                        {p.invoiceUrl && (
+                                            <a href={p.invoiceUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-blue-600 hover:text-blue-800 uppercase tracking-widest font-bold">
+                                                <FileText className="w-3 h-3" /> Ver Factura
+                                            </a>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -296,6 +309,14 @@ export default function FinancePage() {
                                         <input type="number" placeholder="0.00" step="0.01" required className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-5 py-4 outline-none focus:ring-2 focus:ring-primary transition-all font-mono font-bold text-gray-900 text-lg placeholder:text-gray-400" value={newPurchase.amount} onChange={e => setNewPurchase({ ...newPurchase, amount: e.target.value })} />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-2">Factura / Comprobante (Opcional)</label>
+                                <FileUpload 
+                                    onUpload={(url) => setNewPurchase({ ...newPurchase, invoiceUrl: url })} 
+                                    folder={`finance/invoices`}
+                                />
                             </div>
 
                             <div className="flex gap-4 pt-10">

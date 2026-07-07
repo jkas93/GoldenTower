@@ -47,6 +47,13 @@ export default class FinanceController {
     return { success: true };
   }
 
+  @Patch('purchases/:id')
+  @Roles(UserRole.GERENTE, UserRole.PMO)
+  async updatePurchase(@Param('id') id: string, @Body() data: Partial<any>) {
+    await this.financeService.updatePurchase(id, data);
+    return { success: true };
+  }
+
   @Get('summary/:projectId')
   async getSummary(@Param('projectId') projectId: string) {
     return this.financeService.getProjectFinancialSummary(projectId);

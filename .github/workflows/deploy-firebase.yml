@@ -54,19 +54,11 @@ jobs:
           SMTP_PASS=${{ secrets.SMTP_PASS }}
           EOF
 
-      - name: Deploy a Firebase Cloud Functions
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          projectId: gestion-de-proyectos-39ecc
-          channelId: live
-          entryPoint: '.'
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-        # Usamos firebase deploy directamente para funciones
-      
-      - name: Deploy solo Functions (fallback)
+      - name: Escribir credenciales de Google
         run: |
-          npx firebase-tools deploy --only functions --project gestion-de-proyectos-39ecc --token "${{ secrets.FIREBASE_TOKEN }}"
-        if: always()
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > google-credentials.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
+
+      - name: Deploy a Firebase Cloud Functions
+        run: |
+          npx firebase-tools deploy --only functions --project gestion-de-proyectos-39ecc

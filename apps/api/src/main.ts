@@ -35,7 +35,6 @@ async function bootstrap() {
   // CORS: Configuración robusta unificada
   const allowedOrigins = [
     'https://goldentowerc.vercel.app',
-    'https://goldentowerr.vercel.app',
     'https://goldent-web.vercel.app',
     'https://golden.simplemarketing.website',
     'http://localhost:3000',

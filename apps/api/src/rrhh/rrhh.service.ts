@@ -6,6 +6,7 @@ import {
 import { FirebaseService } from '../firebase/firebase.service';
 import { MailService } from '../mail/mail.service';
 import { FirestoreRepository } from '../common/repositories/firestore.repository';
+import { FinanceService } from '../finance/finance.service';
 
 @Injectable()
 export class RRHHService {
@@ -17,6 +18,7 @@ export class RRHHService {
   constructor(
     private firebaseService: FirebaseService,
     private mailService: MailService,
+    private financeService: FinanceService,
   ) {
     const firestore = this.firebaseService.getFirestore();
     this.employeesRepo = new FirestoreRepository(firestore, 'employees');
@@ -245,6 +247,29 @@ export class RRHHService {
   async recordAttendance(data: any): Promise<string> {
     const docId = `${data.employeeId}_${data.date}`;
     await this.attendanceRepo.createWithId(docId, data);
+    
+    // Si asiste (PRESENTE) y está asignado a un proyecto, cargamos el costo diario a Finanzas
+    if (data.status === 'PRESENTE' && data.projectId) {
+      try {
+        const employee = await this.findOneEmployee(data.employeeId);
+        if (employee && employee.salary) {
+          const dailyRate = employee.salary / 30; // asumiendo sueldo mensual y mes de 30 días
+          await this.financeService.createPurchase({
+            projectId: data.projectId,
+            description: `Costo de Planilla - ${employee.name || ''} - ${data.date}`,
+            provider: 'RRHH NÓMINA',
+            amount: dailyRate,
+            currency: 'PEN',
+            status: 'PAGADO', // El costo se asume pagado/efectuado
+            date: data.date,
+          });
+          console.log(`✅ Costo diario de S/${dailyRate} cargado al proyecto ${data.projectId} por ${employee.name}`);
+        }
+      } catch (error) {
+        console.error('Error al registrar costo de planilla:', error);
+      }
+    }
+    
     return docId;
   }
 

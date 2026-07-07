@@ -71,6 +71,7 @@ export const AttendanceSchema = z.object({
     checkOut: z.string().optional(),
     status: z.enum(['PRESENTE', 'TARDE', 'FALTA', 'PERMISO']).default('PRESENTE'),
     notes: z.string().optional(),
+    projectId: z.string().optional(), // Para asignar el costo al proyecto
 });
 
 export type Attendance = z.infer<typeof AttendanceSchema> & { id: string };
@@ -100,6 +101,8 @@ export const PurchaseSchema = z.object({
     invoiceNumber: z.string().optional(),
     invoiceUrl: z.string().url('Debe ser una URL válida').optional(),
     date: z.string().min(1), // YYYY-MM-DD
+    materialId: z.string().optional(),
+    quantity: z.coerce.number().optional(),
 });
 
 export type Purchase = z.infer<typeof PurchaseSchema> & { id: string; createdAt: string; updatedAt?: string };
@@ -137,3 +140,34 @@ export const MaterialRequestSchema = z.object({
 export type MaterialRequest = z.infer<typeof MaterialRequestSchema> & { id: string, createdAt: string };
 export type MaterialRequestItem = z.infer<typeof MaterialRequestItemSchema>;
 export type CreateMaterialRequestDto = z.infer<typeof MaterialRequestSchema>;
+
+// --- Equipment & Machinery Schemas ---
+
+export const EquipmentSchema = z.object({
+    name: z.string().min(2, 'Nombre del equipo requerido'),
+    type: z.enum(['MAQUINARIA', 'HERRAMIENTA', 'VEHICULO', 'EQUIPO_MEDICION', 'OTRO']).default('OTRO'),
+    model: z.string().optional(),
+    serialNumber: z.string().optional(),
+    status: z.enum(['DISPONIBLE', 'EN_USO', 'EN_MANTENIMIENTO', 'FUERA_DE_SERVICIO']).default('DISPONIBLE'),
+    assignedProjectId: z.string().optional(),
+    lastMaintenanceDate: z.string().optional(),
+    nextMaintenanceDate: z.string().optional(),
+    notes: z.string().optional(),
+});
+
+export type Equipment = z.infer<typeof EquipmentSchema> & { id: string; createdAt: string };
+export type CreateEquipmentDto = z.infer<typeof EquipmentSchema>;
+
+export const MaintenanceLogSchema = z.object({
+    equipmentId: z.string().min(1, 'ID de equipo requerido'),
+    date: z.string().min(1),
+    type: z.enum(['PREVENTIVO', 'CORRECTIVO', 'REVISION']).default('PREVENTIVO'),
+    description: z.string().min(5, 'Descripción requerida'),
+    technician: z.string().optional(),
+    cost: z.coerce.number().optional(),
+    nextMaintenanceDate: z.string().optional(),
+});
+
+export type MaintenanceLog = z.infer<typeof MaintenanceLogSchema> & { id: string; createdAt: string };
+export type CreateMaintenanceLogDto = z.infer<typeof MaintenanceLogSchema>;
+

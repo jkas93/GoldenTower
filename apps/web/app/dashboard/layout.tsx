@@ -4,7 +4,8 @@ import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 export default function DashboardLayout({
     children,
@@ -90,9 +91,7 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button className="rounded-xl bg-secondary border border-border p-2 hover:bg-muted text-gray-500 transition-all">
-                            <Bell className="h-5 w-5" />
-                        </button>
+                        <NotificationBell userRole={(user as any)?.role || 'GERENTE'} />
                         <div className="h-8 w-px bg-border"></div>
                         <div className="flex items-center gap-3 bg-secondary border border-border px-3 py-1.5 rounded-xl">
                             <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-[10px] font-bold text-white uppercase">

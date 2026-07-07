@@ -14,7 +14,8 @@ import {
     User as UserIcon,
     ChevronLeft,
     CircleDollarSign,
-    Package
+    Package,
+    Wrench
 } from "lucide-react";
 import { auth } from "@/lib/firebase/clientApp";
 import { signOut } from "firebase/auth";
@@ -117,6 +118,13 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                         <Link href="/dashboard/logistics" className={navLinkClass("/dashboard/logistics")} title="Logística">
                             <Package className={iconClass} />
                             {!isCollapsed && <span className="animate-in fade-in duration-500">Logística</span>}
+                        </Link>
+                    )}
+
+                    {(role === UserRole.GERENTE || role === UserRole.LOGISTICO || role === UserRole.PMO || role === UserRole.SIG) && (
+                        <Link href="/dashboard/equipment" className={navLinkClass("/dashboard/equipment")} title="Equipos">
+                            <Wrench className={iconClass} />
+                            {!isCollapsed && <span className="animate-in fade-in duration-500">Equipos</span>}
                         </Link>
                     )}
 

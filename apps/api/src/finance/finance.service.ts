@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
 import { FirestoreRepository } from '../common/repositories/firestore.repository';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class FinanceService {
@@ -44,6 +45,24 @@ export class FinanceService {
     const purchase = await this.purchasesRepo.findOneOrNull(id);
     if (purchase && purchase.projectId) {
       await this.updateProjectBudgetSpent(purchase.projectId);
+    }
+    
+    // Si la compra es de un material y se marca como RECIBIDO, incrementamos el stock
+    if (purchase && purchase.materialId && purchase.quantity && status === 'RECIBIDO') {
+      try {
+        const materialRef = this.firebaseService
+          .getFirestore()
+          .collection('materials')
+          .doc(purchase.materialId);
+          
+        await materialRef.update({
+          stock: admin.firestore.FieldValue.increment(purchase.quantity)
+        });
+        
+        console.log(`Stock incremented by ${purchase.quantity} for material ${purchase.materialId}`);
+      } catch (error) {
+        console.error('Error incrementing material stock:', error);
+      }
     }
   }
 

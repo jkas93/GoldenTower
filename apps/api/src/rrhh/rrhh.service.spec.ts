@@ -3,6 +3,7 @@ import { RRHHService } from './rrhh.service';
 import { FirebaseService } from '../firebase/firebase.service';
 import { MailService } from '../mail/mail.service';
 import { ConflictException } from '@nestjs/common';
+import { FinanceService } from '../finance/finance.service';
 
 describe('RRHHService', () => {
   let service: RRHHService;
@@ -42,6 +43,12 @@ describe('RRHHService', () => {
           provide: MailService,
           useValue: {
             sendWelcomeEmail: jest.fn(),
+          },
+        },
+        {
+          provide: FinanceService,
+          useValue: {
+            createPurchase: jest.fn(),
           },
         },
       ],

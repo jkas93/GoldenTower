@@ -13,5 +13,7 @@ export {
     PurchaseSchema, type Purchase, type CreatePurchaseDto,
     MaterialSchema, type Material as MaterialType, type CreateMaterialDto,
     MaterialRequestItemSchema,
-    MaterialRequestSchema, type MaterialRequest as MaterialRequestType, type MaterialRequestItem as MaterialRequestItemType, type CreateMaterialRequestDto
+    MaterialRequestSchema, type MaterialRequest as MaterialRequestType, type MaterialRequestItem as MaterialRequestItemType, type CreateMaterialRequestDto,
+    EquipmentSchema, type Equipment, type CreateEquipmentDto,
+    MaintenanceLogSchema, type MaintenanceLog, type CreateMaintenanceLogDto
 } from "./schemas";

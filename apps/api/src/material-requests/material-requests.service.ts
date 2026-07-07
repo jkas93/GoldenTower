@@ -3,6 +3,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { CreateMaterialRequestDto, MaterialRequest } from '@erp/shared';
 import { FirestoreRepository } from '../common/repositories/firestore.repository';
 import { FinanceService } from '../finance/finance.service';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class MaterialRequestsService {
@@ -65,6 +66,30 @@ export class MaterialRequestsService {
         status: 'PENDIENTE',
         date: new Date().toISOString().split('T')[0],
       });
+    }
+
+    // Reducir stock cuando se entrega el material (Logística -> Inventario)
+    if (status === 'ENTREGADO' && request.status !== 'ENTREGADO') {
+      try {
+        const batch = this.firebaseService.getFirestore().batch();
+        for (const item of request.items || []) {
+          if (item.materialId && item.quantity > 0) {
+            const materialRef = this.firebaseService
+              .getFirestore()
+              .collection('materials')
+              .doc(item.materialId);
+            
+            // Decrement by quantity
+            batch.update(materialRef, {
+              stock: admin.firestore.FieldValue.increment(-item.quantity)
+            });
+          }
+        }
+        await batch.commit();
+        console.log(`Stock reduced for request ${id} due to ENTREGADO status`);
+      } catch (error) {
+        console.error('Error reducing material stock:', error);
+      }
     }
   }
 }

@@ -4,9 +4,9 @@ import { ProjectsController } from './projects.controller';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [ProjectsController],
-    providers: [ProjectsService],
-    exports: [ProjectsService],
+  imports: [FirebaseModule],
+  controllers: [ProjectsController],
+  providers: [ProjectsService],
+  exports: [ProjectsService],
 })
-export class ProjectsModule { }
+export class ProjectsModule {}

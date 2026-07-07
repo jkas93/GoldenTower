@@ -89,6 +89,8 @@ export interface Material {
     category: string;
     description?: string;
     unitPrice?: number;
+    stock?: number;
+    minStock?: number;
 }
 
 export interface MaterialRequestItem {

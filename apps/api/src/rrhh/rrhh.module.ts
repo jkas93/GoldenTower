@@ -5,8 +5,8 @@ import { FirebaseModule } from '../firebase/firebase.module';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
-    imports: [FirebaseModule, MailModule],
-    controllers: [RRHHController],
-    providers: [RRHHService],
+  imports: [FirebaseModule, MailModule],
+  controllers: [RRHHController],
+  providers: [RRHHService],
 })
-export class RRHHModule { }
+export class RRHHModule {}

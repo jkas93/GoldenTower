@@ -1,28 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Material, CreateMaterialDto } from '@erp/shared';
+import { FirestoreRepository } from '../common/repositories/firestore.repository';
 
 @Injectable()
 export class MaterialsService {
-    constructor(private firebaseService: FirebaseService) { }
+  private repository: FirestoreRepository<Material>;
 
-    async create(data: CreateMaterialDto): Promise<string> {
-        const docRef = this.firebaseService.getFirestore().collection('materials').doc();
-        await docRef.set({
-            ...data,
-            id: docRef.id,
-            createdAt: new Date().toISOString()
-        });
-        return docRef.id;
-    }
+  constructor(private firebaseService: FirebaseService) {
+    this.repository = new FirestoreRepository<Material>(
+      this.firebaseService.getFirestore(),
+      'materials',
+    );
+  }
 
-    async findAll(): Promise<Material[]> {
-        const snapshot = await this.firebaseService.getFirestore().collection('materials').orderBy('name').get();
-        return snapshot.docs.map(doc => doc.data() as Material);
-    }
+  async create(data: CreateMaterialDto): Promise<string> {
+    return this.repository.create(data);
+  }
 
-    async findOne(id: string): Promise<Material | null> {
-        const doc = await this.firebaseService.getFirestore().collection('materials').doc(id).get();
-        return doc.exists ? (doc.data() as Material) : null;
-    }
+  async findAll(): Promise<Material[]> {
+    return this.repository.findByQuery((collection) =>
+      collection.orderBy('name'),
+    );
+  }
+
+  async findOne(id: string): Promise<Material | null> {
+    return this.repository.findOneOrNull(id);
+  }
+
+  async updateStock(id: string, quantity: number): Promise<void> {
+    const material = await this.findOne(id);
+    if (!material) throw new Error('Material no encontrado');
+
+    const newStock = (material.stock || 0) + quantity;
+    if (newStock < 0) throw new Error('Stock insuficiente');
+
+    await this.repository.update(id, { stock: newStock });
+  }
 }

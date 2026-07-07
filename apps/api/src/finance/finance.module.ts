@@ -4,9 +4,9 @@ import FinanceController from './finance.controller';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [FinanceController],
-    providers: [FinanceService],
-    exports: [FinanceService],
+  imports: [FirebaseModule],
+  controllers: [FinanceController],
+  providers: [FinanceService],
+  exports: [FinanceService],
 })
-export class FinanceModule { }
+export class FinanceModule {}

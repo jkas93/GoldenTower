@@ -3,7 +3,7 @@ import { HealthController } from './health.controller';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [HealthController],
+  imports: [FirebaseModule],
+  controllers: [HealthController],
 })
-export class HealthModule { }
+export class HealthModule {}

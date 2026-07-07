@@ -4,9 +4,9 @@ import { ActivitiesController } from './activities.controller';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [ActivitiesController],
-    providers: [ActivitiesService],
-    exports: [ActivitiesService]
+  imports: [FirebaseModule],
+  controllers: [ActivitiesController],
+  providers: [ActivitiesService],
+  exports: [ActivitiesService],
 })
-export class ActivitiesModule { }
+export class ActivitiesModule {}

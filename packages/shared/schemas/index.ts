@@ -110,6 +110,8 @@ export const MaterialSchema = z.object({
     category: CategoryEnum.default('OTROS'),
     description: z.string().optional(),
     unitPrice: z.coerce.number().optional(),
+    stock: z.coerce.number().default(0),
+    minStock: z.coerce.number().default(0),
 });
 
 export type Material = z.infer<typeof MaterialSchema> & { id: string };

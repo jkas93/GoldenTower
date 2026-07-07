@@ -8,11 +8,11 @@ import { UserRole } from '@erp/shared';
 @Controller('stats')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class StatsController {
-    constructor(private readonly statsService: StatsService) { }
+  constructor(private readonly statsService: StatsService) {}
 
-    @Get('dashboard')
-    @Roles(UserRole.GERENTE, UserRole.PMO, UserRole.COORDINADOR)
-    async getDashboardStats() {
-        return this.statsService.getDashboardStats();
-    }
+  @Get('dashboard')
+  @Roles(UserRole.GERENTE, UserRole.PMO, UserRole.COORDINADOR)
+  async getDashboardStats() {
+    return this.statsService.getDashboardStats();
+  }
 }

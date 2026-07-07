@@ -4,9 +4,9 @@ import { ProgressLogsService } from './progress-logs.service';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [ProgressLogsController],
-    providers: [ProgressLogsService],
-    exports: [ProgressLogsService],
+  imports: [FirebaseModule],
+  controllers: [ProgressLogsController],
+  providers: [ProgressLogsService],
+  exports: [ProgressLogsService],
 })
-export class ProgressLogsModule { }
+export class ProgressLogsModule {}

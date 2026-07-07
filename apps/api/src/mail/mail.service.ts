@@ -4,44 +4,56 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
-    private readonly logger = new Logger(MailService.name);
-    private transporter: nodemailer.Transporter;
+  private readonly logger = new Logger(MailService.name);
+  private transporter: nodemailer.Transporter;
 
-    constructor(private configService: ConfigService) {
-        const smtpHost = this.configService.get<string>('SMTP_HOST');
-        // Parse port explicitly to handle string inputs from .env
-        const smtpPort = parseInt(this.configService.get<string>('SMTP_PORT') || '587', 10);
-        const smtpUser = this.configService.get<string>('SMTP_USER');
-        // Handle boolean correctly: ensure 'false' string isn't truthy
-        const smtpSecure = this.configService.get<string>('SMTP_SECURE') === 'true';
+  constructor(private configService: ConfigService) {
+    const smtpHost = this.configService.get<string>('SMTP_HOST');
+    // Parse port explicitly to handle string inputs from .env
+    const smtpPort = parseInt(
+      this.configService.get<string>('SMTP_PORT') || '587',
+      10,
+    );
+    const smtpUser = this.configService.get<string>('SMTP_USER');
+    // Handle boolean correctly: ensure 'false' string isn't truthy
+    const smtpSecure = this.configService.get<string>('SMTP_SECURE') === 'true';
 
-        this.logger.log(`📧 Configurando transporte SMTP: ${smtpHost}:${smtpPort} (Secure: ${smtpSecure}) (User: ${smtpUser ? 'DEFINED' : 'UNDEFINED'})`);
+    this.logger.log(
+      `📧 Configurando transporte SMTP: ${smtpHost}:${smtpPort} (Secure: ${smtpSecure}) (User: ${smtpUser ? 'DEFINED' : 'UNDEFINED'})`,
+    );
 
-        if (!smtpHost || !smtpUser) {
-            this.logger.error('❌ CRITICAL: SMTP Configuration missing in MailService (Check .env file loading)');
-        }
-
-        this.transporter = nodemailer.createTransport({
-            host: smtpHost,
-            port: smtpPort,
-            secure: smtpSecure, // true for 465, false for other ports
-            auth: {
-                user: smtpUser,
-                pass: this.configService.get<string>('SMTP_PASS'),
-            },
-            connectionTimeout: 10000, // 10 segundos
-            greetingTimeout: 5000, // 5 segundos
-        });
-
-        this.logger.log(`✅ Transporte SMTP configurado para: ${smtpUser}`);
+    if (!smtpHost || !smtpUser) {
+      this.logger.error(
+        '❌ CRITICAL: SMTP Configuration missing in MailService (Check .env file loading)',
+      );
     }
 
-    async sendWelcomeEmail(email: string, name: string, role: string, resetLink: string) {
-        const mailOptions = {
-            from: `"Golden Tower ERP" <${this.configService.get<string>('SMTP_USER')}>`,
-            to: email,
-            subject: 'Bienvenido al sistema ERP - Golden Tower',
-            html: `
+    this.transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpSecure, // true for 465, false for other ports
+      auth: {
+        user: smtpUser,
+        pass: this.configService.get<string>('SMTP_PASS'),
+      },
+      connectionTimeout: 10000, // 10 segundos
+      greetingTimeout: 5000, // 5 segundos
+    });
+
+    this.logger.log(`✅ Transporte SMTP configurado para: ${smtpUser}`);
+  }
+
+  async sendWelcomeEmail(
+    email: string,
+    name: string,
+    role: string,
+    resetLink: string,
+  ) {
+    const mailOptions = {
+      from: `"Golden Tower ERP" <${this.configService.get<string>('SMTP_USER')}>`,
+      to: email,
+      subject: 'Bienvenido al sistema ERP - Golden Tower',
+      html: `
             <!DOCTYPE html>
             <html>
             <head>
@@ -115,50 +127,59 @@ export class MailService {
             </body>
             </html>
             `,
-        };
+    };
 
-        // Retry logic: 3 intentos
-        const maxRetries = 3;
-        let lastError: Error | undefined;
+    // Retry logic: 3 intentos
+    const maxRetries = 3;
+    let lastError: Error | undefined;
 
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                const startTime = Date.now();
-                this.logger.log(`📤 Enviando email a ${email} (intento ${attempt}/${maxRetries})...`);
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const startTime = Date.now();
+        this.logger.log(
+          `📤 Enviando email a ${email} (intento ${attempt}/${maxRetries})...`,
+        );
 
-                const info = await this.transporter.sendMail(mailOptions);
-                const sendTime = Date.now() - startTime;
+        const info = await this.transporter.sendMail(mailOptions);
+        const sendTime = Date.now() - startTime;
 
-                this.logger.log(`✅ Email enviado exitosamente en ${sendTime}ms`);
-                this.logger.log(`   └─ Message ID: ${info.messageId}`);
-                this.logger.log(`   └─ Destinatario: ${email}`);
+        this.logger.log(`✅ Email enviado exitosamente en ${sendTime}ms`);
+        this.logger.log(`   └─ Message ID: ${info.messageId}`);
+        this.logger.log(`   └─ Destinatario: ${email}`);
 
-                return info;
-            } catch (error) {
-                lastError = error;
-                this.logger.warn(`⚠️ Intento ${attempt}/${maxRetries} falló: ${error.message}`);
+        return info;
+      } catch (error) {
+        lastError = error;
+        this.logger.warn(
+          `⚠️ Intento ${attempt}/${maxRetries} falló: ${error.message}`,
+        );
 
-                if (attempt < maxRetries) {
-                    const retryDelay = 1000 * attempt; // Espera incremental: 1s, 2s, 3s
-                    this.logger.log(`⏳ Reintentando en ${retryDelay}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, retryDelay));
-                }
-            }
+        if (attempt < maxRetries) {
+          const retryDelay = 1000 * attempt; // Espera incremental: 1s, 2s, 3s
+          this.logger.log(`⏳ Reintentando en ${retryDelay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
         }
-
-        this.logger.error(`❌ Error al enviar email después de ${maxRetries} intentos:`, lastError?.stack);
-        throw new Error(`Failed to send email after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
+      }
     }
 
-    async verifyConnection(): Promise<boolean> {
-        try {
-            this.logger.log('🔍 Verificando conexión SMTP...');
-            await this.transporter.verify();
-            this.logger.log('✅ Conexión SMTP verificada exitosamente');
-            return true;
-        } catch (error) {
-            this.logger.error('❌ Error al verificar conexión SMTP:', error.message);
-            return false;
-        }
+    this.logger.error(
+      `❌ Error al enviar email después de ${maxRetries} intentos:`,
+      lastError?.stack,
+    );
+    throw new Error(
+      `Failed to send email after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`,
+    );
+  }
+
+  async verifyConnection(): Promise<boolean> {
+    try {
+      this.logger.log('🔍 Verificando conexión SMTP...');
+      await this.transporter.verify();
+      this.logger.log('✅ Conexión SMTP verificada exitosamente');
+      return true;
+    } catch (error) {
+      this.logger.error('❌ Error al verificar conexión SMTP:', error.message);
+      return false;
     }
+  }
 }

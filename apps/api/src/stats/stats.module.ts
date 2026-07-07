@@ -4,9 +4,9 @@ import { StatsService } from './stats.service';
 import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-    imports: [FirebaseModule],
-    controllers: [StatsController],
-    providers: [StatsService],
-    exports: [StatsService],
+  imports: [FirebaseModule],
+  controllers: [StatsController],
+  providers: [StatsService],
+  exports: [StatsService],
 })
-export class StatsModule { }
+export class StatsModule {}

@@ -28,7 +28,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@erp/shared": "file:./erp-shared-0.0.0.tgz",
+    "@erp/shared": "file:../../packages/shared/erp-shared-0.0.0.tgz",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",

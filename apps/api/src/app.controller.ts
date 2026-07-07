@@ -8,8 +8,8 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly mailService: MailService,
-    private readonly configService: ConfigService
-  ) { }
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get()
   getHello(): string {
@@ -27,10 +27,14 @@ export class AppController {
       status = `ERROR: ${e.message}`;
     }
     return {
-      env_smtp_user: user ? `PRESENT (${user.substring(0, 3)}...)` : 'MISSING ❌',
+      env_smtp_user: user
+        ? `PRESENT (${user.substring(0, 3)}...)`
+        : 'MISSING ❌',
       env_smtp_host: this.configService.get('SMTP_HOST') || 'MISSING ❌',
       connection_check: status,
-      process_env_user: process.env.SMTP_USER ? 'Present in process.env' : 'Missing in process.env'
+      process_env_user: process.env.SMTP_USER
+        ? 'Present in process.env'
+        : 'Missing in process.env',
     };
   }
 }

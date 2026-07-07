@@ -9,7 +9,7 @@ const envPaths = [
   path.join(__dirname, '..', '.env'),
   path.join(__dirname, '..', '..', '..', '.env'),
 ];
-envPaths.forEach(p => dotenv.config({ path: p }));
+envPaths.forEach((p) => dotenv.config({ path: p }));
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';

@@ -57,7 +57,7 @@ export default function RRHHPage() {
             });
             if (res.ok) setIncidents(await res.json());
         } catch {
-            console.error(error);
+            // failed silently
         }
     }, [API_URL]);
 

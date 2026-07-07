@@ -96,8 +96,8 @@ export default function CatalogPage() {
     };
 
     const filteredActivities = activities.filter(a =>
-        a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.category.toLowerCase().includes(searchTerm.toLowerCase())
+        (a.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (a.category?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     );
 
     return (

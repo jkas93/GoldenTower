@@ -63,7 +63,6 @@ export default function ProjectsPage() {
             }
 
         } catch {
-            console.error(error);
             showToast("Error de conexión con el servidor", "error");
         }
     };

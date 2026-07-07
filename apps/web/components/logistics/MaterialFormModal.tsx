@@ -20,7 +20,9 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
         unit: "UND",
         category: "OTROS",
         description: "",
-        unitPrice: undefined
+        unitPrice: undefined,
+        stock: 0,
+        minStock: 0
     });
     const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -36,7 +38,9 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
                 unit: material.unit,
                 category: material.category as "PRELIMINARES" | "ESTRUCTURA" | "ALBAÑILERIA" | "ACABADOS" | "INSTALACIONES" | "EXTERIORES" | "OTROS",
                 description: material.description || "",
-                unitPrice: material.unitPrice
+                unitPrice: material.unitPrice,
+                stock: material.stock,
+                minStock: material.minStock
             });
         } else {
             setFormData({
@@ -44,7 +48,9 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
                 unit: "",
                 category: "OTROS",
                 description: "",
-                unitPrice: undefined
+                unitPrice: undefined,
+                stock: 0,
+                minStock: 0
             });
         }
         setErrors({});
@@ -174,6 +180,32 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
                                 onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value ? Number(e.target.value) : undefined })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="Ej: 25.50"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">
+                                Stock Inicial *
+                            </label>
+                            <input
+                                type="number"
+                                step="1"
+                                value={formData.stock}
+                                onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">
+                                Stock Mínimo (Alerta) *
+                            </label>
+                            <input
+                                type="number"
+                                step="1"
+                                value={formData.minStock}
+                                onChange={(e) => setFormData({ ...formData, minStock: Number(e.target.value) })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                         </div>
 

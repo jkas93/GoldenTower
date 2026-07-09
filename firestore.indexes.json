@@ -17,20 +17,6 @@
       ]
     },
     {
-      "collectionGroup": "employees",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "email", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "employees",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "dni", "order": "ASCENDING" }
-      ]
-    },
-    {
       "collectionGroup": "projects",
       "queryScope": "COLLECTION",
       "fields": [

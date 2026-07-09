@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "commonjs",
   "description": "",
-  "main": "dist/src/main.js",
+  "main": "dist/main.js",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -17,7 +17,7 @@
     "dev": "nest start --watch --entryFile main.local",
     "start:dev": "nest start --watch --entryFile main.local",
     "start:debug": "nest start --debug --watch --entryFile main.local",
-    "start:prod": "node dist/src/main.js",
+    "start:prod": "node dist/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "clean": "rimraf dist",
     "seed:employees": "npx tsx src/scripts/seed-employees.ts",
@@ -29,7 +29,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@erp/shared": "file:../../packages/shared/erp-shared-0.0.0.tgz",
+    "@erp/shared": "file:./erp-shared-0.0.1.tgz",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",

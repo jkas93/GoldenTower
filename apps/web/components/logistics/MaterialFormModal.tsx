@@ -39,8 +39,8 @@ export default function MaterialFormModal({ isOpen, onClose, material }: Materia
                 category: material.category as "PRELIMINARES" | "ESTRUCTURA" | "ALBAÑILERIA" | "ACABADOS" | "INSTALACIONES" | "EXTERIORES" | "OTROS",
                 description: material.description || "",
                 unitPrice: material.unitPrice,
-                stock: material.stock,
-                minStock: material.minStock
+                stock: material.stock || 0,
+                minStock: material.minStock || 0
             });
         } else {
             setFormData({

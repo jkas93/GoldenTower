@@ -2,9 +2,12 @@ import {
   Controller, Get, Post, Patch, Delete,
   Param, Body, UseGuards
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { EquipmentService } from './equipment.service';
 import { CreateEquipmentDto, CreateMaintenanceLogDto, EquipmentSchema, MaintenanceLogSchema } from '@erp/shared';
 
+@ApiTags('Equipment')
+@ApiBearerAuth('Firebase')
 @Controller('equipment')
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}

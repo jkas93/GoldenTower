@@ -9,6 +9,7 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { FinanceService } from './finance.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -16,6 +17,8 @@ import { Roles } from '../auth/roles.decorator';
 import { UserRole, CreatePurchaseDto, PurchaseSchema } from '@erp/shared';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
+@ApiTags('Finance')
+@ApiBearerAuth('Firebase')
 @Controller('finance')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export default class FinanceController {

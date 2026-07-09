@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { captureError } from '../monitoring/sentry.config';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -42,6 +43,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
       `${request.method} ${request.url} ${status} - Error: ${JSON.stringify(errorResponse.message)}`,
       exception instanceof Error ? exception.stack : '',
     );
+
+    // Send critical errors (5xx) to Sentry for monitoring
+    if (status >= 500 && exception instanceof Error) {
+      captureError(exception, {
+        method: request.method,
+        url: request.url,
+        statusCode: status,
+        user: (request as any).user?.uid || 'anonymous',
+        userRole: (request as any).user?.role || 'none',
+      });
+    }
 
     response.status(status).json(errorResponse);
   }

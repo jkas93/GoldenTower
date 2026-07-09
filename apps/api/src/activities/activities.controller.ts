@@ -9,6 +9,7 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ActivitiesService } from './activities.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -20,6 +21,8 @@ import {
 } from '@erp/shared';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
+@ApiTags('Activities')
+@ApiBearerAuth('Firebase')
 @Controller('activities')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class ActivitiesController {

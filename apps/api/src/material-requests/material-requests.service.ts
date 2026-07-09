@@ -23,6 +23,24 @@ export class MaterialRequestsService {
     return this.repository.create(data as unknown as Partial<MaterialRequest>);
   }
 
+  async findAll(status?: string): Promise<MaterialRequest[]> {
+    let requests: MaterialRequest[];
+    
+    if (status) {
+      requests = await this.repository.findByQuery((collection) =>
+        collection.where('status', '==', status),
+      );
+    } else {
+      requests = await this.repository.findAll();
+    }
+
+    // Sort in memory by createdAt descending
+    return requests.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
   async findByProject(projectId: string): Promise<MaterialRequest[]> {
     const requests = await this.repository.findByQuery((collection) =>
       collection.where('projectId', '==', projectId),

@@ -8,12 +8,15 @@ import {
   Request,
   ForbiddenException,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ProgressLogsService } from './progress-logs.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole, CreateProgressLogDto } from '@erp/shared';
 
+@ApiTags('Progress Logs')
+@ApiBearerAuth('Firebase')
 @Controller('projects/:projectId/progress-logs')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class ProgressLogsController {

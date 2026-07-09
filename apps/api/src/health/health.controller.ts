@@ -1,11 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FirebaseService } from '../firebase/firebase.service';
 
+@ApiTags('Health')
 @Controller('health')
 export class HealthController {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Health check general del servidor' })
   getHealth() {
     const uptime = process.uptime();
     const memoryUsage = process.memoryUsage();

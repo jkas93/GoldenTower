@@ -11,6 +11,9 @@ envPaths.forEach((p) => dotenv.config({ path: p }));
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
+import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor';
+import { initSentry } from './common/monitoring/sentry.config';
 import { Logger } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
@@ -18,6 +21,9 @@ import { onRequest } from 'firebase-functions/v2/https';
 
 const server = express();
 let isAppInitialized = false;
+
+// Initialize Sentry as early as possible
+initSentry();
 
 async function bootstrap() {
   if (isAppInitialized) {
@@ -46,6 +52,12 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new AllExceptionsFilter());
+  
+  // Rate limiting: 100 requests / minute per IP
+  app.useGlobalInterceptors(
+    new RateLimitInterceptor(100, 60_000),
+    new AuditLogInterceptor(),
+  );
 
   await app.init();
   isAppInitialized = true;

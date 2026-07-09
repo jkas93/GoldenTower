@@ -11,6 +11,14 @@ import {
   UsePipes,
   Query,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
 import { ProjectsService } from './projects.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -20,6 +28,8 @@ import { UserRole, Project, ProjectMilestone, ProjectTask } from '@erp/shared';
 import { ProjectSchema, CreateProjectDto } from '@erp/shared';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
+@ApiTags('Projects')
+@ApiBearerAuth('Firebase')
 @Controller('projects')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class ProjectsController {

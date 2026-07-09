@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master  # Support both branches during transition
     paths:
       - 'apps/api/**'
       - 'packages/shared/**'
@@ -59,6 +60,11 @@ jobs:
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > google-credentials.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
+      
+      - name: Ejecutar tests antes de deploy
+        run: |
+          cd apps/api
+          npm run test
 
       - name: Deploy a Firebase Cloud Functions
         run: |

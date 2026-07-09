@@ -19,16 +19,30 @@ export default function RequestsManager({ canApprove }: RequestsManagerProps) {
 
     useEffect(() => {
         fetchRequests();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filter]);
 
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            // TODO: Implement endpoint to get all requests (not just by project)
-            // For now, this is a placeholder
-            setRequests([]);
+            const token = await user?.getIdToken();
+            const statusQuery = filter !== "ALL" ? `?status=${filter}` : "";
+            const res = await fetch(`${API_URL}/material-requests${statusQuery}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                setRequests(Array.isArray(data) ? data : []);
+            } else {
+                console.error("Error fetching requests:", res.status);
+                setRequests([]);
+            }
         } catch (error) {
             console.error("Error fetching requests:", error);
+            setRequests([]);
         } finally {
             setLoading(false);
         }

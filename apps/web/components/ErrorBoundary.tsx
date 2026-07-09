@@ -24,6 +24,25 @@ export class ErrorBoundary extends Component<Props, State> {
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.error("Uncaught error:", error, errorInfo);
+        
+        // Send to Sentry if available (client-side)
+        if (typeof window !== 'undefined') {
+            try {
+                // Dynamic import to avoid SSR issues
+                const win = window as any;
+                if (win.Sentry) {
+                    win.Sentry.captureException(error, {
+                        contexts: {
+                            react: {
+                                componentStack: errorInfo.componentStack,
+                            },
+                        },
+                    });
+                }
+            } catch {
+                // Silently fail if Sentry is not loaded
+            }
+        }
     }
 
     public render() {

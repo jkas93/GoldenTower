@@ -11,6 +11,14 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
 import { RRHHService } from './rrhh.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -27,6 +35,8 @@ import {
 
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
+@ApiTags('RRHH')
+@ApiBearerAuth('Firebase')
 @Controller('rrhh')
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class RRHHController {
@@ -34,6 +44,15 @@ export class RRHHController {
 
   @Get('check-existence')
   @Roles(UserRole.GERENTE, UserRole.RRHH)
+  @ApiOperation({
+    summary: 'Verifica si un empleado ya existe por DNI o Email',
+    description: 'Endpoint para validación de unicidad al crear empleados. Retorna información del duplicado si existe.',
+  })
+  @ApiQuery({ name: 'dni', required: false, description: 'DNI de 8 dígitos' })
+  @ApiQuery({ name: 'email', required: false, description: 'Email del empleado' })
+  @ApiResponse({ status: 200, description: 'Resultado de la verificación' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @ApiResponse({ status: 403, description: 'Sin permisos suficientes' })
   async checkExistence(
     @Query('dni') dni?: string,
     @Query('email') email?: string,
@@ -44,6 +63,13 @@ export class RRHHController {
   @Post('employees')
   @Roles(UserRole.GERENTE, UserRole.RRHH)
   @UsePipes(new ZodValidationPipe(EmployeeSchema))
+  @ApiOperation({
+    summary: 'Crea un nuevo empleado',
+    description: 'Crea el empleado en Firebase Auth y Firestore. Envía email de bienvenida.',
+  })
+  @ApiResponse({ status: 201, description: 'Empleado creado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos o duplicado' })
+  @ApiResponse({ status: 403, description: 'Sin permisos suficientes' })
   async create(@Body() data: CreateEmployeeDto) {
     const id = await this.rrhhService.createEmployee(data);
     return { id, message: 'Employee registered successfully' };
@@ -51,6 +77,11 @@ export class RRHHController {
 
   // --- Self-Activation Endpoint ---
   @Post('activate')
+  @ApiOperation({
+    summary: 'Activa cuenta del usuario autenticado',
+    description: 'El usuario se activa a sí mismo al hacer login por primera vez',
+  })
+  @ApiResponse({ status: 200, description: 'Cuenta activada' })
   async activate(@Req() req: any) {
     // El usuario se activa a sí mismo al hacer login por primera vez
     const uid = req.user.uid;

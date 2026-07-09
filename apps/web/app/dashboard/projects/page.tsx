@@ -23,6 +23,8 @@ export default function ProjectsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [coordinators, setCoordinators] = useState<User[]>([]);
     const [supervisors, setSupervisors] = useState<User[]>([]);
+    const [nextCursor, setNextCursor] = useState<string | null>(null);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [newProject, setNewProject] = useState({
         name: "",
         description: "",
@@ -42,28 +44,51 @@ export default function ProjectsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, role]);
 
-    const fetchProjects = async () => {
+    const fetchProjects = async (cursor?: string | null) => {
         try {
             const idToken = await auth.currentUser?.getIdToken();
-            // Default 50 to maximize initial load without heavy query strings
-            const data = await (await fetch(`${API_URL}/projects?limit=50`, {
+            const url = cursor 
+                ? `${API_URL}/projects?limit=50&cursor=${cursor}`
+                : `${API_URL}/projects?limit=50`;
+            
+            const data = await (await fetch(url, {
                 headers: { Authorization: `Bearer ${idToken}` },
             })).json();
 
             // Handle API response { projects: [], nextCursor: ... } vs legacy [].
             if (data.projects && Array.isArray(data.projects)) {
-                setProjects(data.projects);
-                // TODO: Store data.nextCursor for pagination feature
+                if (cursor) {
+                    // Append to existing projects for pagination
+                    setProjects(prev => [...prev, ...data.projects]);
+                } else {
+                    // Initial load
+                    setProjects(data.projects);
+                }
+                // Store nextCursor for pagination feature
+                setNextCursor(data.nextCursor || null);
             } else if (Array.isArray(data)) {
                 // Fallback for older API version or unexpected array response
                 setProjects(data);
+                setNextCursor(null);
             } else {
                 setProjects([]); // Default empty array if format is unknown
+                setNextCursor(null);
                 if (!Array.isArray(data)) console.warn('Expected array or {projects: []} but got', data);
             }
 
         } catch {
             showToast("Error de conexión con el servidor", "error");
+        }
+    };
+
+    const loadMoreProjects = async () => {
+        if (!nextCursor || isLoadingMore) return;
+        
+        setIsLoadingMore(true);
+        try {
+            await fetchProjects(nextCursor);
+        } finally {
+            setIsLoadingMore(false);
         }
     };
 
@@ -181,6 +206,20 @@ export default function ProjectsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Pagination Button - Load More */}
+            {nextCursor && projects.length > 0 && (
+                <div className="mt-8 text-center">
+                    <button
+                        onClick={loadMoreProjects}
+                        disabled={isLoadingMore}
+                        className="px-8 py-3 bg-primary text-white rounded-2xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold text-sm uppercase tracking-widest shadow-lg hover:shadow-xl"
+                        data-testid="load-more-projects-btn"
+                    >
+                        {isLoadingMore ? "Cargando..." : "Cargar más proyectos"}
+                    </button>
+                </div>
+            )}
 
             {/* Modal de Creación */}
             {isModalOpen && (

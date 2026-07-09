@@ -9,7 +9,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "kill-ports": "npx kill-port 3000 3001 4001",
-    "clean": "npm run kill-ports && turbo run clean"
+    "clean": "npm run kill-ports && turbo run clean",
+    "test": "turbo run test",
+    "test:cov": "turbo run test:cov"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
@@ -17,7 +19,7 @@
     "typescript": "5.9.2"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "packageManager": "npm@11.5.1",
   "workspaces": [
@@ -27,6 +29,6 @@
   "dependencies": {
     "express": "^5.2.1",
     "firebase": "^12.9.0",
-    "zod": "^4.3.6"
+    "zod": "^3.24.1"
   }
 }

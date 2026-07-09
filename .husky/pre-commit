@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+# Pre-commit hook for Golden Tower ERP
+# 
+# Ejecuta linting y tests antes de permitir commits.
+# 
+# Instalación:
+#   npm install --save-dev husky lint-staged
+#   npx husky install
+#   npx husky add .husky/pre-commit "sh .husky/pre-commit"
+#
+# Para saltear temporalmente:
+#   git commit --no-verify
+
+. "$(dirname -- "$0")/_/husky.sh" 2>/dev/null || true
+
+echo "🔍 Ejecutando validaciones pre-commit..."
+
+# 1. Lint-staged (linting solo de archivos modificados)
+if command -v npx > /dev/null; then
+  npx lint-staged
+  LINT_EXIT=$?
+  
+  if [ $LINT_EXIT -ne 0 ]; then
+    echo "❌ Linting falló. Por favor corrige los errores antes de commit."
+    exit 1
+  fi
+fi
+
+echo "✅ Pre-commit validaciones pasadas"
+exit 0

@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UserRole } from '@erp/shared';
 import { Roles } from '../auth/roles.decorator';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { UsersService } from './users.service';
 
+@ApiTags('Auth')
+@ApiBearerAuth('Firebase')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
